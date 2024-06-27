@@ -1,0 +1,78 @@
+package com.example.shivambhardwaj.shitube.Fragments;
+
+import android.content.res.Configuration;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
+import com.example.shivambhardwaj.shitube.Adapters.ShortsAdapter;
+import com.example.shivambhardwaj.shitube.Models.VideoModel;
+import com.example.shivambhardwaj.shitube.databinding.FragmentShortsBinding;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+
+public class ShortsFragment extends Fragment {
+    FragmentShortsBinding binding;
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        binding = FragmentShortsBinding.inflate(getLayoutInflater(), container, false);
+        View view = binding.getRoot();
+
+        ArrayList list = new ArrayList();
+        ShortsAdapter adapter = new ShortsAdapter(list, getContext());
+
+        binding.ViewPager.setAdapter(adapter);
+
+        int orientation = getResources().getConfiguration().orientation;
+
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+
+        } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+
+        }
+        FirebaseDatabase.getInstance().getReference().child("Shorts").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                list.clear();
+                for (DataSnapshot snapshot1 : snapshot.getChildren()) {
+                    VideoModel model = snapshot1.getValue(VideoModel.class);
+                    list.add(model);
+                    String id = snapshot1.getKey().toString();
+                    FirebaseDatabase.getInstance().getReference().child("Shorts").child(id).child("postId").setValue(id);
+                }
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        return view;
+    }public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        int orientation = newConfig.orientation;
+        handleOrientationChange(orientation);
+    }
+
+    private void handleOrientationChange(int orientation) {
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+
+        } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+
+        }
+    }
+}

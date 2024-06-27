@@ -1,0 +1,31 @@
+{
+  "project_info": {
+    "project_number": "27337115143",
+    "firebase_url": "https://shitube-173fe-default-rtdb.firebaseio.com",
+    "project_id": "shitube-173fe",
+    "storage_bucket": "shitube-173fe.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:27337115143:android:8af9a77ea5bd5f2d264ca2",
+        "android_client_info": {
+          "package_name": "com.example.shivambhardwaj.shitube"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBIL2_2ys4cX5VyCHBUjpTivfwtmSdI6cY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      },
+      "admob_app_id": "ca-app-pub-5928796239739806~5932345653"
+    }
+  ],
+  "configuration_version": "1"
+}
