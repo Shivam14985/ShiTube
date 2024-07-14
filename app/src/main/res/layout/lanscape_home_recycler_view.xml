@@ -69,8 +69,7 @@
             android:ellipsize="end"
             android:maxLines="2"
             android:text="HEllo Guyz This Is Video Title jdsvjbsvj jdfjdbvb jdfj jhjfdjn ljjndsvjn sdkjnv jvn jfgjfj jjsvnn jhfjnjvn nvjfshg jfhjlfbn "
-            android:textColor="@color/black"
-            android:textStyle="bold" />
+            android:textColor="@color/black" />
 
         <TextView
             android:id="@+id/userName"

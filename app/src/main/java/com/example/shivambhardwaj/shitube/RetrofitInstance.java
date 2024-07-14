@@ -4,7 +4,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitInstance {
-    public static final String BaseUrl = "https://run.mocky.io/v3/";
+    public static final String BaseUrl = "https://api.sampleapis.com/movies/";
     public static Retrofit retrofit;
     public static Retrofit getRetrofit(){
 

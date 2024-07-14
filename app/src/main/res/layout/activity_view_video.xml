@@ -36,14 +36,16 @@
                 app:scrubber_color="@color/white"
                 app:unplayed_color="@color/Gray"></androidx.media3.ui.PlayerView>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewvideoSuggestion"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
 
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewvideoSuggestion"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:background="#80000000"
+                    app:layout_constraintStart_toStartOf="parent" />
             <!--        <LinearLayout-->
             <!--            android:id="@+id/adView"-->
             <!--            android:layout_width="0dp"-->
@@ -126,6 +128,7 @@
                         android:textSize="12sp" />
 
                     <LinearLayout
+                        android:id="@+id/KnowMore"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"

@@ -22,12 +22,12 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/search"
+                android:id="@+id/moreOption"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_gravity="end"
-                android:padding="15dp"
-                android:src="@drawable/search" />
+                android:padding="8dp"
+                android:src="@drawable/more" />
         </LinearLayout>
 
         <androidx.core.widget.NestedScrollView

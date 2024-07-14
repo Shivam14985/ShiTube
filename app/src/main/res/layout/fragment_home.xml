@@ -53,12 +53,11 @@
 
             <TextView
                 android:id="@+id/notificationCount"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
                 android:background="@drawable/bg_edittext"
                 android:backgroundTint="@color/red"
                 android:gravity="center"
-                android:text="19"
                 android:textColor="@color/white"
                 android:textSize="8sp"
                 android:textStyle="bold"

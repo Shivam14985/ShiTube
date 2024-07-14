@@ -78,7 +78,7 @@ public class PostVideoFragment extends Fragment {
                     if (creatersModel.getAdmin().equals("true")){
                         binding.approval.setText("true");
                     }if (creatersModel.getAdmin().equals("false")){
-                        binding.approval.setText("false");
+                        binding.approval.setText("Pending");
                     }
                     else {}
                 }
@@ -116,7 +116,7 @@ public class PostVideoFragment extends Fragment {
                 String description = binding.Description.getText().toString();
                 String category = binding.EtCategory.getText().toString();
                 if (category.isEmpty() || Title.isEmpty() || description.isEmpty()) {
-                    Snackbar snackbar = Snackbar.make(view, "Select Category", Snackbar.LENGTH_LONG);
+                    Snackbar snackbar = Snackbar.make(view, "fill all the fields", Snackbar.LENGTH_LONG);
                     snackbar.setBackgroundTint(Color.rgb(233, 233, 233));
                     snackbar.setTextColor(Color.rgb(0, 0, 0));
                     snackbar.show();
@@ -142,10 +142,11 @@ public class PostVideoFragment extends Fragment {
                             if (snapshot.exists()) {
                                 CreatersModel creatersModel = snapshot.getValue(CreatersModel.class);
                                 String ChannelName = creatersModel.getName();
-                                final ProgressDialog dialog = new ProgressDialog(getContext());
-                                dialog.setTitle("Uploading....");
-                                dialog.show();
-                                binding.UplaodToFirebase.setEnabled(true);
+//                                final ProgressDialog dialog = new ProgressDialog(getContext());
+//                                dialog.setTitle("Uploading....");
+//                                dialog.show();
+                                binding.ProgressLayout.setVisibility(View.VISIBLE);
+                                binding.UplaodToFirebase.setEnabled(false);
 
                                 final StorageReference storageReference1 = FirebaseStorage.getInstance().getReference().child("Thumbnails").child(new Date().getTime() + "");
                                 storageReference1.putFile(ThumnailUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -190,13 +191,47 @@ public class PostVideoFragment extends Fragment {
                                                         databaseReference.push().setValue(videoModel).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                             @Override
                                                             public void onSuccess(Void unused) {
-                                                                Toast.makeText(getContext(), "Video Uploaded", Toast.LENGTH_SHORT).show();
-                                                                dialog.dismiss();
+                                                                FirebaseDatabase.getInstance().getReference().child("Creaters").child(FirebaseAuth.getInstance().getUid()).addValueEventListener(new ValueEventListener() {
+                                                                    @Override
+                                                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                        if (snapshot.exists()){
+                                                                            CreatersModel creatersModel = snapshot.getValue(CreatersModel.class);
+                                                                            if (creatersModel.getAdmin().equals("true")){
+                                                                                Snackbar snackbar= Snackbar.make(view, "Video Uploaded", Snackbar.LENGTH_LONG);
+                                                                                snackbar.setBackgroundTint(Color.rgb(5, 146, 18));
+                                                                                snackbar.setTextColor(Color.rgb(252, 252, 252));
+                                                                                snackbar.show();
+                                                                            }if (creatersModel.getAdmin().equals("false")){
+                                                                                Snackbar snackbar= Snackbar.make(view, "Review Pending", Snackbar.LENGTH_INDEFINITE);
+                                                                                snackbar.setBackgroundTint(Color.rgb(200, 0, 54));
+                                                                                snackbar.setTextColor(Color.rgb(255, 255, 255));
+                                                                                snackbar.setActionTextColor(Color.rgb(255, 255, 255));
+                                                                                snackbar.setAction("Know", new View.OnClickListener() {
+                                                                                    @Override
+                                                                                    public void onClick(View v) {
+                                                                                        Snackbar snackbar= Snackbar.make(view, "your video will be reviewed by admin", Snackbar.LENGTH_LONG);
+                                                                                        snackbar.setBackgroundTint(Color.rgb(117, 134, 148));
+                                                                                        snackbar.setTextColor(Color.rgb(252, 252, 252));
+                                                                                        snackbar.show();
+                                                                                    }
+                                                                                });
+                                                                                snackbar.show();
+                                                                            }
+                                                                            else {}
+                                                                        }
+                                                                    }
+
+                                                                    @Override
+                                                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                                                    }
+                                                                });
+//                                                                dialog.dismiss();
                                                             }
                                                         }).addOnFailureListener(new OnFailureListener() {
                                                             @Override
                                                             public void onFailure(@NonNull Exception e) {
-                                                                dialog.dismiss();
+//                                                                dialog.dismiss();
                                                                 Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                                                             }
                                                         });
@@ -215,7 +250,9 @@ public class PostVideoFragment extends Fragment {
                                     @Override
                                     public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
                                         int percentage = (int) ((100 * snapshot.getBytesTransferred()) / snapshot.getTotalByteCount());
-                                        dialog.setMessage("Uploaded:" + (int) percentage + "%");
+//                                        dialog.setMessage("Uploaded:" + (int) percentage + "%");
+                                        binding.progresspercent.setText(percentage +"%");
+                                        binding.progressbar.setProgress(percentage);
                                     }
                                 });
                             } else {

@@ -81,12 +81,40 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <LinearLayout
+                android:id="@+id/ProgressLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <ProgressBar
+                    android:id="@+id/progressbar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_weight="1"
+                    android:progressTint="@color/red"></ProgressBar>
+
+                <TextView
+                    android:id="@+id/progresspercent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:text="100%"
+                    android:textColor="@color/black"></TextView>
+            </LinearLayout>
+
             <EditText
                 android:id="@+id/editTextText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Enter Title Of Your Video"
-                android:inputType="textCapWords" />
+                android:inputType="textCapWords"
+                android:textColorHint="@color/Gray" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/SelectThumnail"
@@ -106,7 +134,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Enter Description"
-                android:inputType="textCapWords"></EditText>
+                android:inputType="textCapWords"
+                android:textColorHint="@color/Gray"></EditText>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textInputLayout4"
@@ -116,7 +145,8 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="20dp"
-                android:hint="Select Category of Video">
+                android:hint="Select Category of Video"
+                android:textColorHint="@color/Gray">
 
                 <AutoCompleteTextView
                     android:id="@+id/Et_Category"
@@ -124,6 +154,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
                     android:layout_marginRight="20dp"
+                    android:background="#00FFFFFF"
                     android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
 

@@ -5,8 +5,10 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -54,13 +56,31 @@ public class MyProfileFragment extends Fragment {
         binding.historyshimmerFrameLayout.startShimmer();
         binding.profiledataShimmer.startShimmer();
 
-        binding.search.setOnClickListener(new View.OnClickListener() {
+        binding.moreOption.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(getContext(), LoginActivity.class);
-                startActivity(intent);
-                Toast.makeText(getContext(), "Signed Out", Toast.LENGTH_SHORT).show();
+                PopupMenu popupMenu = new PopupMenu(getContext(),binding.moreOption);
+                popupMenu.getMenuInflater().inflate(R.menu.more_profile_options_menu, popupMenu.getMenu());
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        if (item.getItemId() == R.id.logout) {
+                            FirebaseAuth.getInstance().signOut();
+                            Intent intent = new Intent(getContext(), LoginActivity.class);
+                            startActivity(intent);
+                            Toast.makeText(getContext(), "Signed Out", Toast.LENGTH_SHORT).show();
+                        }
+                        if (item.getItemId() == R.id.shareApp) {
+                            Intent intent = new Intent();
+                            intent.setAction(Intent.ACTION_SEND);
+                            intent.putExtra(Intent.EXTRA_TEXT, "\n" + "https://drive.google.com/drive/folders/1oaddC4CTr8IcrOjOLR24TXi5dMGkGE_j");
+                            intent.setType("text/plain");
+                            startActivity(Intent.createChooser(intent, "Share Via"));
+                        }
+                        return true;
+                    }
+                });
+                popupMenu.show();
             }
         });
         binding.becomeCreater.setOnClickListener(new View.OnClickListener() {
@@ -83,6 +103,8 @@ public class MyProfileFragment extends Fragment {
         linearLayoutManager.setStackFromEnd(false);
         binding.recyclerHistory.setLayoutManager(linearLayoutManager);
         binding.recyclerHistory.setAdapter(adapter);
+
+        //History
         database.getReference().child("Videos").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -141,7 +163,22 @@ public class MyProfileFragment extends Fragment {
                             }
                         });
                     }
-                    else if (dataSnapshot.child("watchLater").child(FirebaseAuth.getInstance().getUid()).exists()) {
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        //Wtach Later Video Poster
+        database.getReference().child("Videos").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    if (dataSnapshot.child("watchLater").child(FirebaseAuth.getInstance().getUid()).exists()) {
                         VideoModel model = dataSnapshot.getValue(VideoModel.class);
                         Picasso.get().load(model.getThumbnail()).into(binding.posterwatchlater);
                         binding.watcjLAterVideos.setOnClickListener(new View.OnClickListener() {

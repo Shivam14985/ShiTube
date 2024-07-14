@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:context=".Activities.OthersProfileViewActivity">
+
+    <LinearLayout
+        android:id="@+id/channellayoutbackbutton"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:visibility="visible">
+
+        <ImageView
+            android:id="@+id/backButton"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:padding="10dp"
+            android:src="@drawable/backbutton"
+            app:tint="@color/black"></ImageView>
+
+        <TextView
+            android:id="@+id/channelname"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:gravity="center_vertical"
+            android:textColor="@color/black"
+            android:textSize="22sp"
+            android:textStyle="bold"></TextView>
+    </LinearLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/channellayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none"
+        android:visibility="visible">
+
+        <LinearLayout
+            android:id="@+id/AlreadyCreatersLAyout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:backgroundTint="#DCDCDC"
+                app:cardCornerRadius="15dp">
+
+                <ImageView
+                    android:id="@+id/creatersBackgroundImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:background="@drawable/bg_edittext"
+                    android:backgroundTint="#43FFFFFF"
+                    android:minHeight="100dp"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone"></ImageView>
+
+            </androidx.cardview.widget.CardView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_gravity="center"
+                android:orientation="horizontal"
+                android:visibility="visible">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/profileuser"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_margin="5dp"
+                    android:src="@drawable/profileuser"></de.hdodenhof.circleimageview.CircleImageView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/UserName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textColor="@color/textColorGray" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/totalSubscribers"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:textColor="@color/textColorGray" />
+
+                        <TextView
+                            android:id="@+id/totalvideos"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:textColor="@color/textColorGray" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/moreaboutchannellayout"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="More about this channel"
+                    android:textColor="@color/textColorGray" />
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/next"
+                    app:tint="@color/textColorGray"></ImageView>
+            </LinearLayout>
+
+
+            <Button
+                android:id="@+id/btn_subscribe"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_gravity="end"
+                android:layout_marginHorizontal="5dp"
+                android:layout_marginTop="5dp"
+                android:backgroundTint="@color/black"
+                android:gravity="center"
+                android:text="Subscribe"
+                android:textColor="@color/white"
+                android:textStyle="bold" />
+
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/LoadingEffect"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <include layout="@layout/home_fragments_loading_effetc"></include>
+
+                    <include layout="@layout/home_fragments_loading_effetc"></include>
+
+                    <include layout="@layout/home_fragments_loading_effetc"></include>
+
+                    <include layout="@layout/home_fragments_loading_effetc"></include>
+                </LinearLayout>
+            </com.facebook.shimmer.ShimmerFrameLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/myVideosrecyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:nestedScrollingEnabled="false" />
+
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/morebacklayout"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/morebackButton"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:padding="10dp"
+            android:src="@drawable/backbutton"
+            app:tint="@color/black"></ImageView>
+
+        <TextView
+            android:id="@+id/morechannelname"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:gravity="center_vertical"
+            android:text="Shivam Bhardwaj"
+            android:textColor="@color/black"
+            android:textSize="22sp"
+            android:textStyle="bold"></TextView>
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/moreaboutchanneldetails"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="15dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/DescriptionHeading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Description"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/Description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="No description available in this channel"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/linkHeading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:text="Links"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:id="@+id/WebsiteLinkLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/WebsiteImage"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"></ImageView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Website"
+                        android:textColor="@color/black"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/WebsiteLink"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="1dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="www.google.com"
+                        android:textColor="#005CB6"
+                        android:textSize="15sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/FacebookLinkLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/facebookImage"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"></ImageView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Facebook"
+                        android:textColor="@color/black"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/facebookLink"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="1dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="www.google.com"
+                        android:textColor="#005CB6"
+                        android:textSize="15sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/InstagramLinkLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/InstagramImage"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"></ImageView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Instagram"
+                        android:textColor="@color/black"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/InstagramLink"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="1dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="www.google.com"
+                        android:textColor="#005CB6"
+                        android:textSize="15sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/TwitterLinkLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/TwitterImage"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"></ImageView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Twitter"
+                        android:textColor="@color/black"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/TwitterLink"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="1dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="www.google.com"
+                        android:textColor="#005CB6"
+                        android:textSize="15sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:text="More info"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/JoinedOn"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:padding="5dp"></ImageView>
+
+                <TextView
+                    android:id="@+id/JoinedOnText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="Joined 12 Dec 2020"
+                    android:textColor="@color/black" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/growth"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:padding="5dp"></ImageView>
+
+                <TextView
+                    android:id="@+id/totalViews"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="12457 views"
+                    android:textColor="@color/black" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</androidx.appcompat.widget.LinearLayoutCompat>

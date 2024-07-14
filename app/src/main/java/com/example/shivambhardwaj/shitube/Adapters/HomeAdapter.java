@@ -4,6 +4,7 @@ import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,6 +15,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.shivambhardwaj.shitube.Activities.CommonActivity;
+import com.example.shivambhardwaj.shitube.Activities.OthersProfileViewActivity;
 import com.example.shivambhardwaj.shitube.Activities.ViewVideoActivity;
 import com.example.shivambhardwaj.shitube.Models.CreatersModel;
 import com.example.shivambhardwaj.shitube.Models.VideoModel;
@@ -88,9 +91,15 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.viewHolder> {
                     public boolean onMenuItemClick(MenuItem item) {
                         if (item.getItemId() == R.id.Download) {
                             Uri uri = Uri.parse(model.getVideo());
-                            Intent i = new Intent(Intent.ACTION_VIEW);
-                            i.setData(Uri.parse(String.valueOf(uri)));
-                            context.startActivity(i);
+                            DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+                            DownloadManager.Request request = new DownloadManager.Request(uri);
+                            request.setTitle(model.getTitle());
+                            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "filename.jpg");
+                            request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
+                            request.setAllowedOverRoaming(false);
+                            downloadManager.enqueue(request);
+                            Toast.makeText(context, "Downloading", Toast.LENGTH_SHORT).show();
 //                            DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
 //                            DownloadManager.Request request = new DownloadManager.Request(uri);
 //                            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "filename.jpg");
@@ -108,13 +117,33 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.viewHolder> {
                         if (item.getItemId() == R.id.report) {
                             Toast.makeText(context, "Reporting", Toast.LENGTH_SHORT).show();
                         }
+                        if (item.getItemId() == R.id.save) {
+                            FirebaseDatabase.getInstance().getReference().child("Videos").child(model.getPostId()).child("watchLater").child(FirebaseAuth.getInstance().getUid()).setValue("true");
+                            Toast.makeText(context, "Video Saved", Toast.LENGTH_SHORT).show();
+
+                        }
                         return true;
                     }
                 });
                 popupMenu.show();
             }
         });
-
+        holder.binding.KnowMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (model.getAddedBy().equals(FirebaseAuth.getInstance().getUid())){
+                    Intent intent = new Intent(context, CommonActivity.class);
+                    intent.putExtra("data", "Creater");
+                    context.startActivity(intent);
+                }
+                else {
+                    Intent intent = new Intent(context, OthersProfileViewActivity.class);
+                    String addedBy=model.getAddedBy().toString();
+                    intent.putExtra("channelId",addedBy );
+                    context.startActivity(intent);
+                }
+            }
+        });
         FirebaseDatabase.getInstance().getReference().child("Creaters").child(model.getAddedBy()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -146,6 +175,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.viewHolder> {
 
             }
         });
+
     }
 
     @Override

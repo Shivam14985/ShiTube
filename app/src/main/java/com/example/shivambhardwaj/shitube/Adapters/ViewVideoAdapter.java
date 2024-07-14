@@ -16,6 +16,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.shivambhardwaj.shitube.Activities.CommonActivity;
+import com.example.shivambhardwaj.shitube.Activities.OthersProfileViewActivity;
 import com.example.shivambhardwaj.shitube.Activities.ViewVideoActivity;
 import com.example.shivambhardwaj.shitube.Models.CreatersModel;
 import com.example.shivambhardwaj.shitube.Models.VideoModel;
@@ -91,9 +93,13 @@ public class ViewVideoAdapter extends RecyclerView.Adapter<ViewVideoAdapter.view
                     public boolean onMenuItemClick(MenuItem item) {
                         if (item.getItemId() == R.id.Download) {
                             Uri uri = Uri.parse(model.getVideo());
-                            downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+                            DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
                             DownloadManager.Request request = new DownloadManager.Request(uri);
+                            request.setTitle(model.getTitle());
+                            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
                             request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "filename.jpg");
+                            request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
+                            request.setAllowedOverRoaming(false);
                             downloadManager.enqueue(request);
                             Toast.makeText(context, "Downloading", Toast.LENGTH_SHORT).show();
                         }
@@ -108,6 +114,11 @@ public class ViewVideoAdapter extends RecyclerView.Adapter<ViewVideoAdapter.view
                         }
                         if (item.getItemId() == R.id.report) {
                             Toast.makeText(context, "Reporting", Toast.LENGTH_SHORT).show();
+                        }
+                        if (item.getItemId()==R.id.save){
+                            FirebaseDatabase.getInstance().getReference().child("Videos").child(model.getPostId()).child("watchLater").child(FirebaseAuth.getInstance().getUid()).setValue("true");
+                            Toast.makeText(context, "Video Saved", Toast.LENGTH_SHORT).show();
+
                         }
                         return false;
                     }
@@ -145,6 +156,22 @@ public class ViewVideoAdapter extends RecyclerView.Adapter<ViewVideoAdapter.view
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
+            }
+        });
+        holder.binding.KnowMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (model.getAddedBy().equals(FirebaseAuth.getInstance().getUid())){
+                    Intent intent = new Intent(context, CommonActivity.class);
+                    intent.putExtra("data", "Creater");
+                    context.startActivity(intent);
+                }
+                else {
+                    Intent intent = new Intent(context, OthersProfileViewActivity.class);
+                    String addedBy=model.getAddedBy().toString();
+                    intent.putExtra("channelId",addedBy );
+                    context.startActivity(intent);
+                }
             }
         });
     }

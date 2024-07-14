@@ -7,13 +7,12 @@ import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.shivambhardwaj.shitube.Activities.CommonActivity;
-import com.example.shivambhardwaj.shitube.Activities.NotificationVideoViewActivity;
+import com.example.shivambhardwaj.shitube.Activities.ViewVideoActivity;
 import com.example.shivambhardwaj.shitube.Models.CreatersModel;
 import com.example.shivambhardwaj.shitube.Models.NotificationModel;
 import com.example.shivambhardwaj.shitube.Models.UsersModel;
@@ -193,7 +192,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                     context.startActivity(intent);
                 } else {
                     FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getUid()).child("Notifications").child(model.getNotificationId()).child("notificationOpened").setValue(true);
-                    Intent intent = new Intent(context, NotificationVideoViewActivity.class);
+                    Intent intent = new Intent(context, ViewVideoActivity.class);
                     String id = model.getVideoId().toString();
                     intent.putExtra("OnNotificationOpened", id);
                     context.startActivity(intent);

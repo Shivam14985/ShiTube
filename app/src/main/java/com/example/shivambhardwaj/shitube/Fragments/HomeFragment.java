@@ -19,6 +19,7 @@ import com.example.shivambhardwaj.shitube.Activities.NotificationActivity;
 import com.example.shivambhardwaj.shitube.Activities.SearchActivity;
 import com.example.shivambhardwaj.shitube.Adapters.HomeAdapter;
 import com.example.shivambhardwaj.shitube.Adapters.LandscapeHomeAdapter;
+import com.example.shivambhardwaj.shitube.Models.NotificationModel;
 import com.example.shivambhardwaj.shitube.Models.VideoModel;
 import com.example.shivambhardwaj.shitube.R;
 import com.example.shivambhardwaj.shitube.databinding.FragmentHomeBinding;
@@ -121,15 +122,11 @@ public class HomeFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    String opened = dataSnapshot.child("notificationOpened").getValue().toString();
+                    NotificationModel notificationModel = dataSnapshot.getValue(NotificationModel.class);
+                    String opened = String.valueOf(notificationModel.isNotificationOpened());
                     if (opened.equals("false")) {
-                        String count = snapshot.getChildrenCount() + "";
-                        if (count.equals("0")) {
-                            binding.notificationCount.setVisibility(View.GONE);
-                        } else {
-                            binding.notificationCount.setVisibility(View.VISIBLE);
-                            binding.notificationCount.setText(count);
-                        }
+                        binding.notificationCount.setVisibility(View.VISIBLE);
+
                     } else {
                     }
                 }
@@ -195,11 +192,6 @@ public class HomeFragment extends Fragment {
         binding.notifications.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent();
-//                intent.setAction(Intent.ACTION_SEND);
-//                intent.putExtra(Intent.EXTRA_TEXT, "https://drive.google.com/file/d/1oftqtSkXDVoJXEBUjNL1f62npLWHQUwJ/view?usp=drivesdk");
-//                intent.setType("text/plain");
-//                startActivity(Intent.createChooser(intent, "Share Via"));
                 Intent intent = new Intent(getContext(), NotificationActivity.class);
                 startActivity(intent);
             }
@@ -1299,7 +1291,6 @@ public class HomeFragment extends Fragment {
                                 binding.ShimmerHome.stopShimmer();
                             }
                         }
-                        adapter.notifyDataSetChanged();
                     }
 
                     @Override
@@ -1360,7 +1351,6 @@ public class HomeFragment extends Fragment {
                     } else {
                     }
                 }
-                adapter.notifyDataSetChanged();
             }
 
             @Override

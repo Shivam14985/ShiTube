@@ -98,7 +98,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="visible">
 
 
             <LinearLayout
@@ -109,12 +110,37 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#DCDCDC"
+                    app:cardCornerRadius="15dp">
+
+                    <ImageView
+                        android:id="@+id/BackgroundImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:background="@drawable/bg_edittext"
+                        android:backgroundTint="#43FFFFFF"
+                        android:minHeight="100dp"
+                        android:scaleType="centerCrop"></ImageView>
+
+                    <ImageView
+                        android:id="@+id/SelectBAclgrounImage"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="end|bottom"
+                        android:padding="3dp"
+                        android:src="@drawable/camera"></ImageView>
+                </androidx.cardview.widget.CardView>
+
+
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/profile"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="25dp"
+                    android:layout_marginTop="0dp"
                     android:src="@drawable/profileuser"
                     app:civ_border_color="@color/black"
                     app:civ_border_width="2dp" />
@@ -151,6 +177,56 @@
                     android:textColor="@color/black"
                     android:textColorHint="@color/textColorGray" />
 
+                <EditText
+                    android:id="@+id/EnterChannelDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:hint="Enter Channel Description"
+                    android:inputType="text"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/textColorGray" />
+
+                <EditText
+                    android:id="@+id/EnterWebsiteLink"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:hint="Enter Website Link"
+                    android:inputType="text"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/textColorGray" />
+
+                <EditText
+                    android:id="@+id/EnterInstagramLink"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:hint="Enter Instagram Link"
+                    android:inputType="text"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/textColorGray" />
+
+                <EditText
+                    android:id="@+id/EnterFacebookLink"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:hint="Enter Instagram Link"
+                    android:inputType="text"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/textColorGray" />
+
+                <EditText
+                    android:id="@+id/EnterTwitterLink"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:hint="Enter TWitter Link"
+                    android:inputType="text"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/textColorGray" />
+
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_BecomeCreater"
                     android:layout_width="match_parent"
@@ -168,13 +244,32 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:backgroundTint="#DCDCDC"
+                    app:cardCornerRadius="15dp">
+
+                    <ImageView
+                        android:id="@+id/creatersBackgroundImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:background="@drawable/bg_edittext"
+                        android:backgroundTint="#43FFFFFF"
+                        android:minHeight="100dp"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone"></ImageView>
+
+                </androidx.cardview.widget.CardView>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:visibility="visible">
 
                     <de.hdodenhof.circleimageview.CircleImageView
-
                         android:id="@+id/profileuser"
                         android:layout_width="70dp"
                         android:layout_height="70dp"
@@ -185,6 +280,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="10dp"
+                        android:layout_weight="1"
                         android:gravity="center_vertical"
                         android:orientation="vertical">
 
@@ -194,7 +290,6 @@
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
                             android:maxLines="1"
-                            android:text="Shivam Bhardwaj"
                             android:textColor="@color/black"
                             android:textSize="20sp"
                             android:textStyle="bold" />
@@ -205,7 +300,6 @@
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
                             android:maxLines="1"
-                            android:text="bhardwajshivam667"
                             android:textColor="@color/textColorGray" />
 
                         <LinearLayout
@@ -219,7 +313,6 @@
                                 android:layout_height="wrap_content"
                                 android:ellipsize="end"
                                 android:maxLines="1"
-                                android:text="10 Subscriber "
                                 android:textColor="@color/textColorGray" />
 
                             <TextView
@@ -229,13 +322,86 @@
                                 android:layout_marginLeft="5dp"
                                 android:ellipsize="end"
                                 android:maxLines="1"
-                                android:text="3 Videos "
                                 android:textColor="@color/textColorGray" />
                         </LinearLayout>
 
                     </LinearLayout>
 
+                    <ImageView
+                        android:id="@+id/EditPRofile"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+                        android:padding="10dp"
+                        android:src="@drawable/pencil"></ImageView>
+
                 </LinearLayout>
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/AllVideos"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
+                            android:layout_margin="2.5dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_edittext"
+                            android:backgroundTint="@color/black"
+                            android:gravity="center"
+                            android:padding="2.5dp"
+                            android:text="All Videos"
+                            android:textColor="@color/white"
+                            android:textSize="18sp" />
+
+                        <TextView
+                            android:id="@+id/ApprovedVideos"
+                            android:layout_width="match_parent"
+                            android:layout_height="30dp"
+                            android:layout_margin="2.5dp"
+                            android:background="@drawable/bg_edittext"
+                            android:backgroundTint="#E3E3E3"
+                            android:gravity="center"
+                            android:padding="2.5dp"
+                            android:text="Approved"
+                            android:textColor="@color/black"
+                            android:textSize="18sp" />
+
+                        <TextView
+                            android:id="@+id/RejectedVideos"
+                            android:layout_width="match_parent"
+                            android:layout_height="30dp"
+                            android:layout_margin="2.5dp"
+                            android:background="@drawable/bg_edittext"
+                            android:backgroundTint="#E3E3E3"
+                            android:gravity="center"
+                            android:padding="2.5dp"
+                            android:text="Rejected"
+                            android:textColor="@color/black"
+                            android:textSize="18sp" />
+
+                        <TextView
+                            android:id="@+id/PendingVideos"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
+                            android:layout_margin="2.5dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_edittext"
+                            android:backgroundTint="#E3E3E3"
+                            android:gravity="center"
+                            android:padding="2.5dp"
+                            android:text="Pending"
+                            android:textColor="@color/black"
+                            android:textSize="18sp" />
+                    </LinearLayout>
+                </HorizontalScrollView>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/myVideosrecyclerview"
@@ -325,5 +491,147 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </LinearLayout>
+
+    <ScrollView
+
+        android:id="@+id/EditProfile"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="10dp"
+            android:orientation="vertical">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#DCDCDC"
+                app:cardCornerRadius="15dp">
+
+                <ImageView
+                    android:id="@+id/EDITBackgroundImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:background="@drawable/bg_edittext"
+                    android:backgroundTint="#43FFFFFF"
+                    android:minHeight="100dp"
+                    android:scaleType="centerCrop"></ImageView>
+
+                <ImageView
+                    android:id="@+id/EDITSelectBAclgrounImage"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="end|bottom"
+                    android:background="@drawable/bg_edittext"
+                    android:backgroundTint="@color/white"
+                    android:padding="3dp"
+                    android:src="@drawable/pencil"></ImageView>
+            </androidx.cardview.widget.CardView>
+
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/Changeprofile"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="0dp"
+                android:src="@drawable/profileuser"
+                app:civ_border_color="@color/black"
+                app:civ_border_width="2dp" />
+
+            <ImageView
+                android:id="@+id/EDITSelectProfile"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="-22dp"
+                android:background="@drawable/bg_edittext"
+                android:backgroundTint="@color/white"
+                android:padding="3dp"
+                android:src="@drawable/pencil"></ImageView>
+
+            <EditText
+                android:id="@+id/EDITEtName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:hint="Enter Name"
+                android:inputType="text"
+                android:textColor="@color/black"
+                android:textColorHint="@color/textColorGray" />
+
+            <EditText
+                android:id="@+id/EDITEtUserNAme"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:hint="Enter User Name"
+                android:inputType="text"
+                android:textColor="@color/black"
+                android:textColorHint="@color/textColorGray" />
+
+            <EditText
+                android:id="@+id/EditChannelDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:hint="Enter Channel Description"
+                android:inputType="text"
+                android:textColor="@color/black"
+                android:textColorHint="@color/textColorGray" />
+
+            <EditText
+                android:id="@+id/EditWebsiteLink"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:hint="Enter Website Link"
+                android:inputType="text"
+                android:textColor="@color/black"
+                android:textColorHint="@color/textColorGray" />
+
+            <EditText
+                android:id="@+id/EditInstagramLink"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:hint="Enter Instagram Link"
+                android:inputType="text"
+                android:textColor="@color/black"
+                android:textColorHint="@color/textColorGray" />
+
+            <EditText
+                android:id="@+id/EditFacebookLink"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:hint="Enter Facebook Link"
+                android:inputType="text"
+                android:textColor="@color/black"
+                android:textColorHint="@color/textColorGray" />
+
+            <EditText
+                android:id="@+id/EditTwitterLink"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:hint="Enter Twitter Link"
+                android:inputType="text"
+                android:textColor="@color/black"
+                android:textColorHint="@color/textColorGray" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/EDITbtn_BecomeCreater"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="Edit Profile"
+                android:textAllCaps="false" />
+        </LinearLayout>
+    </ScrollView>
 
 </androidx.appcompat.widget.LinearLayoutCompat>

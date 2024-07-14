@@ -1,12 +1,15 @@
 package com.example.shivambhardwaj.shitube.Activities;
 
+import android.app.DownloadManager;
 import android.app.PictureInPictureParams;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.util.Rational;
 import android.view.GestureDetector;
@@ -88,7 +91,6 @@ public class ViewVideoActivity extends AppCompatActivity {
     private NativeAd mnativeAd;
     private boolean isShowingTrackSelectionDialog;
     private boolean isCrossChecked;
-
     private GestureDetector gestureDetector;
     private boolean controllerVisibility = false;
     private boolean bottomSuggestion = false;
@@ -105,6 +107,21 @@ public class ViewVideoActivity extends AppCompatActivity {
         Sprite doubleBounce = new FadingCircle();
         binding.spinKit.setIndeterminateDrawable(doubleBounce);
 
+        binding.KnowMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (model.getAddedBy().equals(FirebaseAuth.getInstance().getUid())) {
+                    Intent intent = new Intent(ViewVideoActivity.this, CommonActivity.class);
+                    intent.putExtra("data", "Creater");
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent(ViewVideoActivity.this, OthersProfileViewActivity.class);
+                    String addedBy = model.getAddedBy().toString();
+                    intent.putExtra("channelId", addedBy);
+                    startActivity(intent);
+                }
+            }
+        });
         MobileAds.initialize(this, new OnInitializationCompleteListener() {
             @Override
             public void onInitializationComplete(@NonNull InitializationStatus initializationStatus) {
@@ -122,6 +139,13 @@ public class ViewVideoActivity extends AppCompatActivity {
             String time = TimeAgo.using(model.getAddedAt());
             binding.Views.setText(model.getViewsCount() + 1 + " views  " + time);
             if (model.getApproved().equals("true")) {
+                binding.SaveVideo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(ViewVideoActivity.this, "Saved", Toast.LENGTH_SHORT).show();
+                        database.getReference().child("Videos").child(model.getPostId()).child("watchLater").child(FirebaseAuth.getInstance().getUid()).setValue("true");
+                    }
+                });
                 binding.mainLayout.setVisibility(View.VISIBLE);
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -214,6 +238,7 @@ public class ViewVideoActivity extends AppCompatActivity {
             if (model.getAddedBy().equals(FirebaseAuth.getInstance().getUid())) {
                 binding.btnSubscribe.setVisibility(View.GONE);
             }
+
             // Prepare the media source
             exoPlayer = new ExoPlayer.Builder(ViewVideoActivity.this).build();
             binding.PlayerView.setPlayer(exoPlayer);
@@ -270,14 +295,14 @@ public class ViewVideoActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Uri uri = Uri.parse(model.getVideo());
-                    Intent i = new Intent(Intent.ACTION_VIEW);
-                    i.setData(Uri.parse(String.valueOf(uri)));
-                    startActivity(i);
-//                            DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-//                            DownloadManager.Request request = new DownloadManager.Request(uri);
-//                            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "filename.jpg");
-//                            downloadManager.enqueue(request);
-//                            Toast.makeText(context, "Downloading", Toast.LENGTH_SHORT).show();
+                    DownloadManager downloadManager = (DownloadManager) getApplicationContext().getSystemService(Context.DOWNLOAD_SERVICE);
+                    DownloadManager.Request request = new DownloadManager.Request(uri);
+                    request.setTitle(model.getTitle());
+                    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                    request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "filename.jpg");
+                    request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
+                    request.setAllowedOverRoaming(false);
+                    downloadManager.enqueue(request);
                 }
             });
             binding.share.setOnClickListener(new View.OnClickListener() {
@@ -363,9 +388,9 @@ public class ViewVideoActivity extends AppCompatActivity {
             backButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (isFullScreen==true) {
+                    if (isFullScreen == true) {
                         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                    } else{
+                    } else {
                         finish();
                     }
                 }
@@ -435,6 +460,12 @@ public class ViewVideoActivity extends AppCompatActivity {
                         trackSelectionDialog.show(getSupportFragmentManager(), /* tag= */ null);
 
                     }
+                }
+            });
+            binding.SaveVideo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    database.getReference().child("Videos").child(model.getPostId()).child("watchLater").child(FirebaseAuth.getInstance().getUid()).setValue("true");
                 }
             });
             resize_button.setOnClickListener(new View.OnClickListener() {
@@ -526,12 +557,6 @@ public class ViewVideoActivity extends AppCompatActivity {
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
 
-                }
-            });
-            binding.SaveVideo.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    database.getReference().child("Videos").child(model.getPostId()).child("watchLater").child(FirebaseAuth.getInstance().getUid()).setValue("true");
                 }
             });
             database.getReference().child("Videos").child(model.getPostId()).child("likedBy").child(FirebaseAuth.getInstance().getUid()).addValueEventListener(new ValueEventListener() {
@@ -678,40 +703,578 @@ public class ViewVideoActivity extends AppCompatActivity {
 
                 }
             });
-
-        }
-
-        ArrayList list = new ArrayList();
-        ViewVideoAdapter adapter = new ViewVideoAdapter(list, this);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
-        linearLayoutManager.setStackFromEnd(true);
-        binding.recyclerView.setLayoutManager(linearLayoutManager);
-        binding.recyclerView.setAdapter(adapter);
-        FirebaseDatabase.getInstance().getReference().child("Videos").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                list.clear();
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    String approved = dataSnapshot.child("approved").getValue().toString();
-                    if (approved.equals("true")) {
-                        VideoModel model1 = dataSnapshot.getValue(VideoModel.class);
-                        String postId = model1.getPostId().toString();
-                        String postID2 = model.getPostId().toString();
-                        if (postId.equals(postID2)) {
-                        } else {
-                            list.add(model1);
+            ArrayList list = new ArrayList();
+            ViewVideoAdapter adapter = new ViewVideoAdapter(list, this);
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
+            linearLayoutManager.setStackFromEnd(true);
+            binding.recyclerView.setLayoutManager(linearLayoutManager);
+            binding.recyclerView.setAdapter(adapter);
+            FirebaseDatabase.getInstance().getReference().child("Videos").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    list.clear();
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        String approved = dataSnapshot.child("approved").getValue().toString();
+                        if (approved.equals("true")) {
+                            VideoModel model1 = dataSnapshot.getValue(VideoModel.class);
+                            String postId = model1.getPostId().toString();
+                            String postID2 = model.getPostId().toString();
+                            if (postId.equals(postID2)) {
+                            } else {
+                                list.add(model1);
+                            }
                         }
+
                     }
+                    adapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
 
                 }
-                adapter.notifyDataSetChanged();
-            }
+            });
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+        } else {
 
-            }
-        });
+            Intent intent = getIntent();
+            String videoId = intent.getStringExtra("OnNotificationOpened");
+
+            database.getReference().child("Videos").child(videoId).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    VideoModel videoModel = snapshot.getValue(VideoModel.class);
+                    binding.commentsdes.setText("Comments " + videoModel.getCommentsCount());
+                    binding.VideoTitle.setText(videoModel.getTitle());
+                    String time = TimeAgo.using(videoModel.getAddedAt());
+                    binding.Views.setText(videoModel.getViewsCount() + 1 + " views  " + time);
+                    if (videoModel.getApproved().equals("true")) {
+                        binding.mainLayout.setVisibility(View.VISIBLE);
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                //NAtiveAds Code
+                                loadNAtiveAds();
+                            }
+                        }, 10000);
+                        //interstitial ads
+                        loadInterstitialAds();
+                        //banner ads
+                        loadBannerAds();
+                    } else {
+                    }
+                    if (videoModel.getAddedBy().equals(FirebaseAuth.getInstance().getUid())) {
+                        binding.btnSubscribe.setVisibility(View.GONE);
+                    }
+                    // Prepare the media source
+                    exoPlayer = new ExoPlayer.Builder(ViewVideoActivity.this).build();
+                    binding.PlayerView.setPlayer(exoPlayer);
+                    Uri uri = Uri.parse(videoModel.getVideo());
+                    MediaItem mediaItem = MediaItem.fromUri(uri);
+
+                    exoPlayer.setMediaItem(mediaItem);
+                    exoPlayer.addListener(new Player.Listener() {
+                        @Override
+                        public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+
+                            if (playWhenReady && playbackState == Player.STATE_READY) {
+                                // Active playback.
+                            } else if (playbackState == Player.STATE_ENDED) {
+                                //The player finished playing all media
+                                binding.PlayerView.hideController();
+                                //Add your code here
+
+                            } else if (playWhenReady) {
+                                // Not playing because playback ended, the player is buffering, stopped or
+                                // failed. Check playbackState and player.getPlaybackError for details.
+                            } else {
+                                // Paused by app.
+                            }
+
+                        }
+                    });
+                    gestureDetector = new GestureDetector(ViewVideoActivity.this, new GestureListener());
+                    // Set the onTouchListener for the gesture TextView
+                    binding.PlayerView.setOnTouchListener(new View.OnTouchListener() {
+                        @Override
+                        public boolean onTouch(View v, MotionEvent event) {
+                            if (event.getAction() == MotionEvent.ACTION_UP) {
+                                if (controllerVisibility == true) {
+                                    binding.PlayerView.hideController();
+                                } else {
+                                    binding.PlayerView.showController();
+                                }
+                            }
+                            return gestureDetector.onTouchEvent(event);
+                        }
+                    });
+                    binding.PlayerView.setControllerVisibilityListener(new PlayerView.ControllerVisibilityListener() {
+                        @Override
+                        public void onVisibilityChanged(int visibility) {
+                            if (visibility == View.VISIBLE) {
+                                controllerVisibility = true;
+                            } else {
+                                controllerVisibility = false;
+                            }
+                        }
+                    });
+                    binding.download.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Uri uri = Uri.parse(videoModel.getVideo());
+                            DownloadManager downloadManager = (DownloadManager) getApplicationContext().getSystemService(Context.DOWNLOAD_SERVICE);
+                            DownloadManager.Request request = new DownloadManager.Request(uri);
+                            request.setTitle(model.getTitle());
+                            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "filename.jpg");
+                            request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
+                            request.setAllowedOverRoaming(false);
+                            downloadManager.enqueue(request);
+//                            DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+//                            DownloadManager.Request request = new DownloadManager.Request(uri);
+//                            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "filename.jpg");
+//                            downloadManager.enqueue(request);
+//                            Toast.makeText(context, "Downloading", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    binding.share.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String uri = videoModel.getVideo();
+                            Intent intent = new Intent();
+                            intent.setAction(Intent.ACTION_SEND);
+                            intent.putExtra(Intent.EXTRA_TEXT, videoModel.getTitle() + "\n" + uri);
+                            intent.setType("text/plain");
+                            startActivity(Intent.createChooser(intent, "Share Via"));
+
+                        }
+                    });
+                    database.getReference().child("Videos").child(videoModel.getPostId()).child("lastSeen").child(FirebaseAuth.getInstance().getUid()).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.exists()) {
+                                long lastSeen = Long.parseLong(snapshot.getValue() + "");
+                                exoPlayer.seekTo(lastSeen);
+                                exoPlayer.prepare();
+                                exoPlayer.setPlayWhenReady(true);
+                            } else {
+                                exoPlayer.prepare();
+                                exoPlayer.setPlayWhenReady(true);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+                    exoPlayer.addListener(new Player.Listener() {
+                        @Override
+                        public void onPlayerError(PlaybackException error) {
+                            Player.Listener.super.onPlayerError(error);
+                            Toast.makeText(ViewVideoActivity.this, "Check Internet Connection", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    exoPlayer.addListener(new Player.Listener() {
+                    });
+                    exoPlayer.addListener(new Player.Listener() {
+                        @Override
+                        public void onPlaybackStateChanged(int state) {
+                            if (state == Player.STATE_READY) {
+                                binding.spinKit.setVisibility(View.GONE);
+                                play_pause_button.setVisibility(View.VISIBLE);
+                            } else if (state == Player.STATE_BUFFERING) {
+                                binding.spinKit.setVisibility(View.VISIBLE);
+                                play_pause_button.setVisibility(View.GONE);
+                            } else {
+                                binding.spinKit.setVisibility(View.GONE);
+                                play_pause_button.setVisibility(View.VISIBLE);
+                            }
+
+                        }
+                    });
+                    forward_button = binding.PlayerView.findViewById(R.id.exo_forward);
+                    backward_button = binding.PlayerView.findViewById(R.id.exo_backward);
+                    play_pause_button = binding.PlayerView.findViewById(R.id.exo_play_pause);
+                    fullscreen_button = binding.PlayerView.findViewById(R.id.exo_full);
+                    settingbutton = binding.PlayerView.findViewById(R.id.settings);
+                    resize_button = binding.PlayerView.findViewById(R.id.size_ration);
+
+                    exo_title = binding.PlayerView.findViewById(R.id.exo_title);
+                    int orientation = getResources().getConfiguration().orientation;
+
+                    if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+
+                    } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                        exo_title.setVisibility(View.VISIBLE);
+                        fullscreen_button.setImageDrawable(ContextCompat.getDrawable(ViewVideoActivity.this, R.drawable.fullscreenopen));
+                        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+                        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) binding.PlayerView.getLayoutParams();
+                        params.width = params.MATCH_PARENT;
+                        params.height = params.MATCH_PARENT;
+                        binding.PlayerView.setLayoutParams(params);
+                        isFullScreen = true;
+                    }
+                    backButton = binding.PlayerView.findViewById(R.id.backcontroller);
+
+                    backButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (isFullScreen == true) {
+                                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                            } else {
+                                finish();
+                            }
+                        }
+                    });
+                    exo_title.setText(videoModel.getTitle());
+                    play_pause_button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            exoPlayer.setPlayWhenReady(!exoPlayer.getPlayWhenReady());
+                            play_pause_button.setImageResource(Boolean.TRUE.equals(exoPlayer.getPlayWhenReady()) ? R.drawable.pause : R.drawable.play);
+                        }
+                    });
+                    forward_button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            exoPlayer.seekTo(exoPlayer.getCurrentPosition() + 10000);
+                        }
+                    });
+                    backward_button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            long num = exoPlayer.getCurrentPosition() - 10000;
+                            if (num < 0) {
+                                exoPlayer.seekTo(0);
+                            } else {
+                                exoPlayer.seekTo(num);
+                            }
+                        }
+                    });
+//            back_button.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    if (isFullScreen) {
+//                        exo_title.setVisibility(View.INVISIBLE);
+//                        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+//                        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+//                        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) binding.PlayerView.getLayoutParams();
+//                        params.width = params.MATCH_PARENT;
+//                        params.height = (int) (210 * getApplicationContext().getResources().getDisplayMetrics().density);
+//                        binding.PlayerView.setLayoutParams(params);
+//                        isFullScreen = false;
+//                        fullscreen_button.setImageDrawable(ContextCompat.getDrawable(ViewVideoActivity.this, R.drawable.fullscreenclose));
+//
+//                    } else {
+//                        finish();
+//                        exoPlayer.release();
+//                    }
+//                }
+//            });
+                    fullscreen_button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (isFullScreen) {
+                                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                            } else {
+                                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                            }
+                        }
+                    });
+                    settingbutton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (!isShowingTrackSelectionDialog && TrackSelectionDialog.willHaveContent(exoPlayer)) {
+                                isShowingTrackSelectionDialog = true;
+                                TrackSelectionDialog trackSelectionDialog = TrackSelectionDialog.createForPlayer(exoPlayer,
+                                        /* onDismissListener= */ dismissedDialog -> isShowingTrackSelectionDialog = false);
+                                trackSelectionDialog.show(getSupportFragmentManager(), /* tag= */ null);
+
+                            }
+                        }
+                    });
+                    resize_button.setOnClickListener(new View.OnClickListener() {
+                        @OptIn(markerClass = UnstableApi.class)
+                        @Override
+                        public void onClick(View v) {
+                            if (RESIZE_MODE == 0) {
+                                binding.PlayerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
+                                RESIZE_MODE = 1;
+                            } else {
+                                binding.PlayerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_ZOOM);
+                                RESIZE_MODE = 0;
+                            }
+                        }
+                    });
+                    if (videoModel.getCommentsCount() == 0) {
+                        binding.nocommentsLAyout.setVisibility(View.VISIBLE);
+                        database.getReference().child("Creaters").child(FirebaseAuth.getInstance().getUid()).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if (snapshot.exists()) {
+                                    CreatersModel creatersModel = snapshot.getValue(CreatersModel.class);
+                                    Picasso.get().load(creatersModel.getProfileImage()).placeholder(R.drawable.profileuser).into(binding.MyProfile);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                    } else {
+                        binding.commentInputLayout.setVisibility(View.VISIBLE);
+                        database.getReference().child("Videos").child(videoModel.getPostId()).child("comments").addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                    CommentsModel commentsModel = dataSnapshot.getValue(CommentsModel.class);
+                                    binding.comment.setText(commentsModel.getComment());
+                                    FirebaseDatabase.getInstance().getReference().child("Creaters").child(commentsModel.getCommentedBy()).addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            if (snapshot.exists()) {
+                                                CreatersModel model = snapshot.getValue(CreatersModel.class);
+                                                Picasso.get().load(model.getProfileImage()).placeholder(R.drawable.profileuser).into(binding.commentdProfile);
+
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+
+                                        }
+                                    });
+                                }
+
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+
+                    }
+                    database.getReference().child("Creaters").child(videoModel.getAddedBy()).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            CreatersModel creatersModel = snapshot.getValue(CreatersModel.class);
+                            Picasso.get().load(creatersModel.getProfileImage()).placeholder(R.drawable.profileuser).into(binding.channelImage);
+                            binding.channelName.setText(creatersModel.getName());
+                            String subscribers = snapshot.child("subscribedBy").getChildrenCount() + "";
+                            binding.subscribers.setText(subscribers);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+
+                    database.getReference().child("Videos").child(videoModel.getPostId()).child("likesCount").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            String likes = snapshot.getValue().toString();
+                            binding.likenumber.setText(likes);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+                    binding.SaveVideo.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            database.getReference().child("Videos").child(videoModel.getPostId()).child("watchLater").child(FirebaseAuth.getInstance().getUid()).setValue("true");
+                        }
+                    });
+                    database.getReference().child("Videos").child(videoModel.getPostId()).child("likedBy").child(FirebaseAuth.getInstance().getUid()).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.exists()) {
+                                binding.likevideo.setImageResource(R.drawable.liked);
+                                binding.likevideo.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        int dislekes = videoModel.getLikesCount() - 1;
+                                        videoModel.setLikesCount(dislekes);
+                                        database.getReference().child("Videos").child(videoModel.getPostId()).child("likesCount").setValue(dislekes);
+                                        database.getReference().child("Videos").child(videoModel.getPostId()).child("likedBy").child(FirebaseAuth.getInstance().getUid()).removeValue();
+                                        binding.likevideo.setImageResource(R.drawable.like);
+
+                                        database.getReference().child("Videos").child(videoModel.getPostId()).child("likesCount").addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                String likes = snapshot.getValue().toString();
+                                                binding.likenumber.setText(likes);
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                            }
+                                        });
+                                    }
+                                });
+                            } else {
+                                binding.likevideo.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        int likes = videoModel.getLikesCount() + 1;
+                                        videoModel.setLikesCount(likes);
+                                        database.getReference().child("Videos").child(videoModel.getPostId()).child("likesCount").setValue(likes);
+                                        NotificationModel notificationModel = new NotificationModel();
+                                        notificationModel.setVideoId(videoModel.getPostId());
+                                        notificationModel.setNotificationOpened(false);
+                                        notificationModel.setNotificationBy(FirebaseAuth.getInstance().getUid());
+                                        notificationModel.setNotificationAt(new Date().getTime());
+                                        notificationModel.setNotificationText("liked your video.");
+                                        notificationModel.setNotificationType("Likes");
+                                        database.getReference().child("Users").child(videoModel.getAddedBy()).child("Notifications").push().setValue(notificationModel);
+                                        database.getReference().child("Videos").child(videoModel.getPostId()).child("likedBy").child(FirebaseAuth.getInstance().getUid()).setValue(true);
+                                        binding.likevideo.setImageResource(R.drawable.liked);
+                                        database.getReference().child("Videos").child(videoModel.getPostId()).child("likesCount").addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                String likes = snapshot.getValue().toString();
+                                                binding.likenumber.setText(likes);
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+
+                    binding.Comments.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Bundle mBundle = new Bundle();
+                            mBundle.putString("mText", videoModel.getPostId());
+                            BottomSheetDialogFragment bottomSheetDialogFragment = new BottomSheetFragment();
+                            bottomSheetDialogFragment.show(getSupportFragmentManager(), bottomSheetDialogFragment.getTag());
+                            bottomSheetDialogFragment.setArguments(mBundle);
+                        }
+                    });
+
+                    database.getReference().child("Creaters").child(videoModel.getAddedBy()).child("subscribedBy").child(FirebaseAuth.getInstance().getUid()).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.exists()) {
+                                binding.btnSubscribe.setText("Subscibed");
+                                binding.btnSubscribe.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        database.getReference().child("Creaters").child(videoModel.getAddedBy()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                CreatersModel creatersModel = snapshot.getValue(CreatersModel.class);
+                                                int subscribers = creatersModel.getSubscribersCount() - 1;
+                                                creatersModel.setSubscribersCount(subscribers);
+                                                database.getReference().child("Creaters").child(videoModel.getAddedBy()).child("subscribersCount").setValue(subscribers);
+                                                database.getReference().child("Creaters").child(videoModel.getAddedBy()).child("subscribedBy").child(FirebaseAuth.getInstance().getUid()).removeValue();
+                                                binding.btnSubscribe.setText("Subscribe");
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                            }
+                                        });
+                                    }
+                                });
+                            } else {
+                                binding.btnSubscribe.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        database.getReference().child("Creaters").child(videoModel.getAddedBy()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                CreatersModel creatersModel = snapshot.getValue(CreatersModel.class);
+                                                int subscribers = creatersModel.getSubscribersCount() + 1;
+                                                creatersModel.setSubscribersCount(subscribers);
+                                                database.getReference().child("Creaters").child(videoModel.getAddedBy()).child("subscribersCount").setValue(subscribers);
+                                                database.getReference().child("Creaters").child(videoModel.getAddedBy()).child("subscribedBy").child(FirebaseAuth.getInstance().getUid()).setValue("true");
+                                                binding.btnSubscribe.setText("Subscribed");
+
+                                                NotificationModel notificationModel = new NotificationModel();
+                                                notificationModel.setNotificationType("Subscribers");
+                                                notificationModel.setNotificationText("subscribed your channel.");
+                                                notificationModel.setNotificationBy(FirebaseAuth.getInstance().getUid());
+                                                notificationModel.setNotificationOpened(false);
+                                                notificationModel.setVideoId(videoModel.getPostId());
+                                                notificationModel.setNotificationAt(new Date().getTime());
+                                                database.getReference().child("Users").child(videoModel.getAddedBy()).child("Notifications").push().setValue(notificationModel);
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+            ArrayList list = new ArrayList();
+            ViewVideoAdapter adapter = new ViewVideoAdapter(list, this);
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
+            linearLayoutManager.setStackFromEnd(true);
+            binding.recyclerView.setLayoutManager(linearLayoutManager);
+            binding.recyclerView.setAdapter(adapter);
+            FirebaseDatabase.getInstance().getReference().child("Videos").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    list.clear();
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        String approved = dataSnapshot.child("approved").getValue().toString();
+                        if (approved.equals("true")) {
+                            VideoModel model1 = dataSnapshot.getValue(VideoModel.class);
+                            String postId = model1.getPostId().toString();
+                            String postID2 = videoId;
+                            if (postId.equals(postID2)) {
+                            } else {
+                                list.add(model1);
+                            }
+                        }
+
+                    }
+                    adapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -757,7 +1320,7 @@ public class ViewVideoActivity extends AppCompatActivity {
                     public void run() {
                         loadNAtiveAds();
                     }
-                }, 25000);
+                }, 30000);
             }
         }).withNativeAdOptions(new NativeAdOptions.Builder().setVideoOptions(new VideoOptions.Builder().setStartMuted(true).build()).build()).build();
 //if error the remove this code withNativeAdOptions(new NativeAdOptions.Builder()
@@ -923,7 +1486,6 @@ public class ViewVideoActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        exoPlayer.play();
         active = true;
     }
 
@@ -946,7 +1508,13 @@ public class ViewVideoActivity extends AppCompatActivity {
         exoPlayer.release();
         active = false;
         long lastseen = exoPlayer.getCurrentPosition();
-        database.getReference().child("Videos").child(model.getPostId()).child("lastSeen").child(FirebaseAuth.getInstance().getUid()).setValue(lastseen);
+        if (model != null) {
+            database.getReference().child("Videos").child(model.getPostId()).child("lastSeen").child(FirebaseAuth.getInstance().getUid()).setValue(lastseen);
+        } else {
+            Intent intent = getIntent();
+            String videoId = intent.getStringExtra("OnNotificationOpened");
+            database.getReference().child("Videos").child(videoId).child("lastSeen").child(FirebaseAuth.getInstance().getUid()).setValue(lastseen);
+        }
     }
 
     @Override
@@ -1100,8 +1668,10 @@ public class ViewVideoActivity extends AppCompatActivity {
             return true;
         }
 
+        @OptIn(markerClass = UnstableApi.class)
         private void onDragUp() {
             if (isFullScreen == true) {
+                binding.PlayerView.hideController();
                 binding.recyclerViewvideoSuggestion.setVisibility(View.VISIBLE);
                 ArrayList<VideoModel> list = new ArrayList<>();
                 BottomVideoSuggetionAdapter adapter = new BottomVideoSuggetionAdapter(list, ViewVideoActivity.this);
@@ -1109,31 +1679,61 @@ public class ViewVideoActivity extends AppCompatActivity {
                 linearLayoutManager.setStackFromEnd(true);
                 binding.recyclerViewvideoSuggestion.setLayoutManager(linearLayoutManager);
                 binding.recyclerViewvideoSuggestion.setAdapter(adapter);
-                FirebaseDatabase.getInstance().getReference().child("Videos").addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        list.clear();
-                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                            String approved = dataSnapshot.child("approved").getValue().toString();
-                            if (approved.equals("true")) {
-                                VideoModel model1 = dataSnapshot.getValue(VideoModel.class);
-                                String postId = model1.getPostId().toString();
-                                String postID2 = model.getPostId().toString();
-                                if (postId.equals(postID2)) {
-                                } else {
-                                    list.add(model1);
+                if (model != null) {
+                    FirebaseDatabase.getInstance().getReference().child("Videos").addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            list.clear();
+                            for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                String approved = dataSnapshot.child("approved").getValue().toString();
+                                if (approved.equals("true")) {
+                                    VideoModel model1 = dataSnapshot.getValue(VideoModel.class);
+                                    String postId = model1.getPostId().toString();
+                                    String postID2 = model.getPostId().toString();
+                                    if (postId.equals(postID2)) {
+                                    } else {
+                                        list.add(model1);
+                                    }
                                 }
+
                             }
+                            adapter.notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
 
                         }
-                        adapter.notifyDataSetChanged();
-                    }
+                    });
+                }
+                Intent intent = getIntent();
+                String videoId = intent.getStringExtra("OnNotificationOpened");
+                if (videoId != null) {
+                    FirebaseDatabase.getInstance().getReference().child("Videos").addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            list.clear();
+                            for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                String approved = dataSnapshot.child("approved").getValue().toString();
+                                if (approved.equals("true")) {
+                                    VideoModel model1 = dataSnapshot.getValue(VideoModel.class);
+                                    String postId = model1.getPostId().toString();
+                                    if (postId.equals(videoId)) {
+                                    } else {
+                                        list.add(model1);
+                                    }
+                                }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
+                            }
+                            adapter.notifyDataSetChanged();
+                        }
 
-                    }
-                });
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+                }
                 bottomSuggestion = true;
             } else {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
@@ -1170,6 +1770,7 @@ public class ViewVideoActivity extends AppCompatActivity {
                     Rational aspectRatio = new Rational(16, 9);
                     pictureInPictureParamsBuilder.setAspectRatio(aspectRatio);
                     enterPictureInPictureMode(pictureInPictureParamsBuilder.build());
+
                 } else {
                     Toast.makeText(ViewVideoActivity.this, "Your device doesn't support this feature", Toast.LENGTH_SHORT).show();
                 }

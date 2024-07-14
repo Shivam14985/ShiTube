@@ -22,13 +22,8 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".Activities.NotificationVideoViewActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize|layoutDirection|screenLayout|smallestScreenSize|uiMode"
-            android:excludeFromRecents="true"
-            android:exported="false"
-            android:hardwareAccelerated="true"
-            android:resizeableActivity="true"
-            android:supportsPictureInPicture="true" />
+            android:name=".Activities.OthersProfileViewActivity"
+            android:exported="false" />
         <activity
             android:name=".Activities.NotificationActivity"
             android:exported="false"
@@ -71,8 +66,8 @@
             android:name=".Activities.MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|layoutDirection|screenLayout|smallestScreenSize|uiMode"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize|adjustPan"
-            android:hardwareAccelerated="true" />
+            android:hardwareAccelerated="true"
+            android:windowSoftInputMode="adjustResize|adjustPan" />
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"

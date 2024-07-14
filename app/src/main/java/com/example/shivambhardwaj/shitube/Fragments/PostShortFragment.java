@@ -117,6 +117,9 @@ public class PostShortFragment extends Fragment {
                                                     videoModel.setVideo(uri.toString());
                                                     videoModel.setTitle(binding.editTextText.getText().toString());
                                                     videoModel.setPostType("Shorts");
+                                                    videoModel.setViewsCount(0);
+                                                    videoModel.setCommentsCount(0);
+                                                    videoModel.setLikesCount(0);
                                                     videoModel.setVideoDescription(binding.Description.getText().toString());
                                                     videoModel.setAddedAt(new Date().getTime());
                                                     videoModel.setAddedBy(FirebaseAuth.getInstance().getUid());
@@ -233,6 +236,7 @@ public class PostShortFragment extends Fragment {
         if (requestCode == 101 && resultCode == RESULT_OK) {
             videoUri = data.getData();
             binding.videoView.setVideoURI(videoUri);
+            binding.upload.setVisibility(View.VISIBLE);
         }
         if (requestCode == 100 && resultCode == RESULT_OK) {
             if (data.getData() != null) {

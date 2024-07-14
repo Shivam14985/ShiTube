@@ -9,6 +9,9 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.PagerSnapHelper;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SnapHelper;
 
 import com.example.shivambhardwaj.shitube.Adapters.ShortsAdapter;
 import com.example.shivambhardwaj.shitube.Models.VideoModel;
@@ -29,19 +32,17 @@ public class ShortsFragment extends Fragment {
         // Inflate the layout for this fragment
         binding = FragmentShortsBinding.inflate(getLayoutInflater(), container, false);
         View view = binding.getRoot();
-
+        binding.FacebookShimmer.startShimmer();
         ArrayList list = new ArrayList();
         ShortsAdapter adapter = new ShortsAdapter(list, getContext());
 
+        // Create a LinearLayoutManager with reverse layout
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, true);
+        layoutManager.setStackFromEnd(true);
         binding.ViewPager.setAdapter(adapter);
-
-        int orientation = getResources().getConfiguration().orientation;
-
-        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-
-        } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-
-        }
+        binding.ViewPager.setLayoutManager(layoutManager);
+        SnapHelper snapHelper = new PagerSnapHelper();
+        snapHelper.attachToRecyclerView(binding.ViewPager);
         FirebaseDatabase.getInstance().getReference().child("Shorts").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -51,8 +52,9 @@ public class ShortsFragment extends Fragment {
                     list.add(model);
                     String id = snapshot1.getKey().toString();
                     FirebaseDatabase.getInstance().getReference().child("Shorts").child(id).child("postId").setValue(id);
+                    binding.FacebookShimmer.stopShimmer();
+                    binding.FacebookShimmer.setVisibility(View.GONE);
                 }
-                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -60,8 +62,18 @@ public class ShortsFragment extends Fragment {
 
             }
         });
+
+        int orientation = getResources().getConfiguration().orientation;
+
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+
+        } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+
+        }
         return view;
-    }public void onConfigurationChanged(@NonNull Configuration newConfig) {
+    }
+
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
         int orientation = newConfig.orientation;
