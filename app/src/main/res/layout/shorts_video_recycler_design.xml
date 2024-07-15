@@ -2,7 +2,6 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black">
@@ -65,14 +64,14 @@
             android:text="32"
             android:textColor="@color/white"
             android:textStyle="bold" />
+
         <ImageView
             android:id="@+id/download"
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_marginTop="25dp"
             android:padding="3dp"
-            android:src="@drawable/downloadwhite"
-            ></ImageView>
+            android:src="@drawable/downloadwhite"></ImageView>
 
         <TextView
             android:layout_width="wrap_content"
@@ -81,6 +80,7 @@
             android:text="Downl.."
             android:textColor="@color/white"
             android:textStyle="bold" />
+
         <ImageView
             android:id="@+id/Share"
             android:layout_width="30dp"
@@ -111,7 +111,7 @@
         <LinearLayout
             android:id="@+id/KnowMore"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
             android:layout_marginLeft="25dp"
             android:layout_marginBottom="5dp"
             android:gravity="center_vertical"
@@ -127,9 +127,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxWidth="200dp"
+                android:maxLines="1"
                 android:textColor="@color/white"
                 android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/verifiedMark"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginLeft="5dp"
+                android:src="@drawable/verified"
+                android:visibility="gone"></ImageView>
         </LinearLayout>
 
         <TextView
@@ -174,8 +184,8 @@
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:indeterminateTint="@color/red"
         android:indeterminateBehavior="repeat"
+        android:indeterminateTint="@color/red"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/videoview"

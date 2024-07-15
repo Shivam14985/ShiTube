@@ -17,6 +17,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -29,10 +31,18 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.shivambhardwaj.shitube.Models.UsersModel;
 import com.example.shivambhardwaj.shitube.R;
 import com.example.shivambhardwaj.shitube.databinding.ActivitySignUpBinding;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -51,6 +61,7 @@ public class SignUpActivity extends AppCompatActivity {
     ActivitySignUpBinding binding;
     FirebaseAuth auth;
     FirebaseDatabase database;
+    GoogleSignInClient mGoogleSignInClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +71,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
-
+        FirebaseApp.initializeApp(SignUpActivity.this);
         // Notification Service for the Manager
         notifManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -70,7 +81,6 @@ public class SignUpActivity extends AppCompatActivity {
             public void onClick(View v) {
                 ProgressDialog progressDialog = new ProgressDialog(SignUpActivity.this);
                 progressDialog.setMessage("Signing Up");
-
                 String Email = binding.EtEmail.getText().toString();
                 String Name = binding.EtName.getText().toString();
                 String Password = binding.EtPassword.getText().toString();
@@ -150,7 +160,22 @@ public class SignUpActivity extends AppCompatActivity {
                 finish();
             }
         });
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.clientId))
+                .requestEmail()
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+        binding.AuthGoogle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+                activityResultLauncher.launch(signInIntent);
+            }
+        });
+
         askNotificationPermission();
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -167,4 +192,34 @@ public class SignUpActivity extends AppCompatActivity {
             }
         }
     }
+    private final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult o) {
+            if (o.getResultCode() == RESULT_OK) {
+                Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(o.getData());
+                try {
+                    GoogleSignInAccount account = task.getResult(ApiException.class);
+                    AuthCredential authCredential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+                    auth.signInWithCredential(authCredential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                String NAme=auth.getCurrentUser().getDisplayName();
+                                String Email=auth.getCurrentUser().getEmail();
+                                UsersModel usersModel =new UsersModel(NAme,Email);
+                                database.getReference().child("Users").child(task.getResult().getUser().getUid()).setValue(usersModel);
+                                Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
+                                startActivity(intent);
+                            } else {
+                                Toast.makeText(SignUpActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                } catch (ApiException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    });
+
 }

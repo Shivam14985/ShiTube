@@ -66,6 +66,9 @@ public class ShortsAdapter extends RecyclerView.Adapter<ShortsAdapter.vieHolder>
                 CreatersModel creatersModel = snapshot.getValue(CreatersModel.class);
                 holder.binding.Name.setText(creatersModel.getName());
                 Picasso.get().load(creatersModel.getProfileImage()).into(holder.binding.Profile);
+                if (snapshot.child("admin").getValue().toString().equals("true")){
+                    holder.binding.verifiedMark.setVisibility(View.VISIBLE);
+                }
             }
 
             @Override

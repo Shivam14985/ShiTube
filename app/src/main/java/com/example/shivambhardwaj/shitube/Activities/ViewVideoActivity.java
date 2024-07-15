@@ -539,6 +539,10 @@ public class ViewVideoActivity extends AppCompatActivity {
                     binding.channelName.setText(creatersModel.getName());
                     String subscribers = snapshot.child("subscribedBy").getChildrenCount() + "";
                     binding.subscribers.setText(subscribers);
+                    if (snapshot.child("admin").getValue().toString().equals("true")) {
+                        binding.verifiedMark.setVisibility(View.VISIBLE);
+                    }
+
                 }
 
                 @Override
@@ -1066,6 +1070,9 @@ public class ViewVideoActivity extends AppCompatActivity {
                             binding.channelName.setText(creatersModel.getName());
                             String subscribers = snapshot.child("subscribedBy").getChildrenCount() + "";
                             binding.subscribers.setText(subscribers);
+                            if (snapshot.child("admin").getValue().toString().equals("true")) {
+                                binding.verifiedMark.setVisibility(View.VISIBLE);
+                            }
                         }
 
                         @Override
@@ -1475,6 +1482,7 @@ public class ViewVideoActivity extends AppCompatActivity {
                                 }
                             }, 600000);
                         }
+                        exoPlayer.play();
                     }
                 });
 

@@ -28,7 +28,9 @@
             android:id="@+id/channelname"
             android:layout_width="match_parent"
             android:layout_height="56dp"
+            android:ellipsize="end"
             android:gravity="center_vertical"
+            android:maxLines="1"
             android:textColor="@color/black"
             android:textSize="22sp"
             android:textStyle="bold"></TextView>
@@ -88,15 +90,32 @@
                     android:layout_weight="1"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/name"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:ellipsize="end"
-                        android:maxLines="1"
-                        android:textColor="@color/black"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:id="@+id/name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:maxWidth="200dp"
+                            android:maxLines="1"
+                            android:textColor="@color/black"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:id="@+id/verifiedMark"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginLeft="5dp"
+                            android:src="@drawable/verified"
+                            android:visibility="gone"></ImageView>
+
+                    </LinearLayout>
 
                     <TextView
                         android:id="@+id/UserName"

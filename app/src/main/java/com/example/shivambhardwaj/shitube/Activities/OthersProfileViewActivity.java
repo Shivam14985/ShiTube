@@ -65,6 +65,9 @@ public class OthersProfileViewActivity extends AppCompatActivity {
                         } else {
                             binding.creatersBackgroundImage.setVisibility(View.GONE);
                         }
+                        if (snapshot.child("admin").getValue().toString().equals("true")){
+                            binding.verifiedMark.setVisibility(View.VISIBLE);
+                        }
                     }
                 }
 

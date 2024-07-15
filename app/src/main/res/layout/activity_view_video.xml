@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     android:orientation="vertical"
+    android:keepScreenOn="true"
     tools:context=".Activities.ViewVideoActivity">
 
     <LinearLayout
@@ -37,15 +38,15 @@
                 app:unplayed_color="@color/Gray"></androidx.media3.ui.PlayerView>
 
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerViewvideoSuggestion"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:background="#80000000"
-                    app:layout_constraintStart_toStartOf="parent" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewvideoSuggestion"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:background="#80000000"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
             <!--        <LinearLayout-->
             <!--            android:id="@+id/adView"-->
             <!--            android:layout_width="0dp"-->
@@ -84,7 +85,8 @@
 
             <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:visibility="visible">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -146,7 +148,8 @@
                         <TextView
                             android:id="@+id/channelName"
                             android:layout_width="130dp"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
                             android:layout_marginLeft="10dp"
                             android:ellipsize="end"
                             android:gravity="center_vertical"
@@ -154,6 +157,15 @@
                             android:text=""
                             android:textColor="@color/black"
                             android:textStyle="bold" />
+
+                        <ImageView
+                            android:id="@+id/verifiedMark"
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginLeft="5dp"
+                            android:src="@drawable/verified"
+                            android:visibility="gone"></ImageView>
 
                         <TextView
                             android:id="@+id/subscribers"
