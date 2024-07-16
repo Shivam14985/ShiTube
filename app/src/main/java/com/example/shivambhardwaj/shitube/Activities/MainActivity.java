@@ -1,6 +1,7 @@
 package com.example.shivambhardwaj.shitube.Activities;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.drawable.Icon;
@@ -61,8 +62,10 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-
+        if (FirebaseAuth.getInstance().getCurrentUser()==null){
+            Intent intent =new Intent(MainActivity.this,LoginActivity.class);
+            startActivity(intent);
+        }
         binding.bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -200,4 +203,5 @@ public class MainActivity extends AppCompatActivity {
             ((MyProfileFragment) fragment).onConfigurationChanged(newConfig);
         }
     }
+
 }

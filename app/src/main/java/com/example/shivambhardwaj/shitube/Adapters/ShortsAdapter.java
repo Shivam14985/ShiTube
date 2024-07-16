@@ -1,5 +1,7 @@
 package com.example.shivambhardwaj.shitube.Adapters;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
@@ -130,6 +132,15 @@ public class ShortsAdapter extends RecyclerView.Adapter<ShortsAdapter.vieHolder>
                         public void onClick(View v) {
                             int likes = model.getLikesCount() + 1;
                             model.setLikesCount(likes);
+                            holder.binding.likedBlastAnimation.setVisibility(View.VISIBLE);
+                            holder.binding.likedBlastAnimation.playAnimation();
+                            holder.binding.likedBlastAnimation.addAnimatorListener(new AnimatorListenerAdapter() {
+                                @Override
+                                public void onAnimationEnd(@NonNull Animator animation, boolean isReverse) {
+                                    super.onAnimationEnd(animation, isReverse);
+                                    holder.binding.likedBlastAnimation.setVisibility(View.INVISIBLE);
+                                }
+                            });
                             database.getReference().child("Shorts").child(model.getPostId()).child("likesCount").setValue(likes);
                             database.getReference().child("Shorts").child(model.getPostId()).child("likedBy").child(FirebaseAuth.getInstance().getUid()).setValue(true);
                             holder.binding.like.setImageResource(R.drawable.liked);

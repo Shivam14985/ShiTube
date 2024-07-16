@@ -1,5 +1,7 @@
 package com.example.shivambhardwaj.shitube.Activities;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.DownloadManager;
 import android.app.PictureInPictureParams;
 import android.content.Context;
@@ -597,6 +599,15 @@ public class ViewVideoActivity extends AppCompatActivity {
                             public void onClick(View v) {
                                 int likes = model.getLikesCount() + 1;
                                 model.setLikesCount(likes);
+                                binding.likedAnimationBlast.playAnimation();
+                                binding.likedAnimationBlast.setVisibility(View.VISIBLE);
+                                binding.likedAnimationBlast.addAnimatorListener(new AnimatorListenerAdapter() {
+                                    @Override
+                                    public void onAnimationEnd(@NonNull Animator animation, boolean isReverse) {
+                                        super.onAnimationEnd(animation, isReverse);
+                                        binding.likedAnimationBlast.setVisibility(View.GONE);
+                                    }
+                                });
                                 database.getReference().child("Videos").child(model.getPostId()).child("likesCount").setValue(likes);
                                 NotificationModel notificationModel = new NotificationModel();
                                 notificationModel.setVideoId(model.getPostId());
