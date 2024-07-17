@@ -368,6 +368,7 @@ public class PostVideoFragment extends Fragment {
                         if (playbackState == Player.STATE_READY) {
                             long duration = mediaController.getDuration();
                             videoModel.setDuration(duration);
+                            binding.Duration.setText(duration+""+" milli seconds");
                         }
                     }
                 });

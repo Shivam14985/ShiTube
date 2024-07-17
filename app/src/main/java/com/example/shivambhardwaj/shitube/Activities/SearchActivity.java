@@ -94,19 +94,6 @@ public class SearchActivity extends AppCompatActivity {
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                                 VideoModel model = dataSnapshot.getValue(VideoModel.class);
-//                           String searchable=model.getSearchVideo();
-//                            // Iterate through the given string to
-//                            // display the individual characters
-//                            for (int i = 0; i < searchable.length(); i++) {
-//                                System.out.print(searchable.charAt(i) + " ");
-//                                if ( searchable.contains(s.toString())){
-//                                    list.add(model);
-//                                    adapter.notifyDataSetChanged();
-//                                }
-//                                else {
-//                                    Toast.makeText(SearchActivity.this, "Nothing", Toast.LENGTH_SHORT).show();
-//                                }
-//                            }
                                 String searchable = model.getSearchVideo().toLowerCase();
                                 if (searchable.contains(s.toString().toLowerCase())) {
                                     list.add(model);

@@ -183,7 +183,7 @@ public class ShortsAdapter extends RecyclerView.Adapter<ShortsAdapter.vieHolder>
             public void onPrepared(MediaPlayer mp) {
                 mp.start();
                 holder.binding.progressBar3.setVisibility(View.GONE);
-            }
+               }
         });
         holder.binding.main.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -215,8 +215,9 @@ public class ShortsAdapter extends RecyclerView.Adapter<ShortsAdapter.vieHolder>
             @Override
             public void onCompletion(MediaPlayer mp) {
                 mp.start();
-            }
+                }
         });
+
         holder.binding.KnowMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -1,5 +1,6 @@
 package com.example.shivambhardwaj.shitube.Activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -29,7 +30,6 @@ import com.example.shivambhardwaj.shitube.R;
 import com.example.shivambhardwaj.shitube.databinding.ActivityCommonBinding;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -49,6 +49,7 @@ public class CommonActivity extends AppCompatActivity {
     FirebaseStorage storage;
     Uri uri;
     Uri backImageUri;
+    ProgressDialog progressDialog = new ProgressDialog(CommonActivity.this);
 
     @Override
 
@@ -165,6 +166,8 @@ public class CommonActivity extends AppCompatActivity {
             binding.btnBecomeCreater.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    progressDialog.setMessage("Please Wait");
+                    progressDialog.show();
                     CreatersModel model = new CreatersModel();
                     String Name = binding.EtName.getText().toString();
                     String UserName = binding.EtUserNAme.getText().toString();
@@ -217,6 +220,7 @@ public class CommonActivity extends AppCompatActivity {
                                                                     Toast.makeText(CommonActivity.this, "You are Creater now", Toast.LENGTH_SHORT).show();
                                                                     binding.AlreadyCreatersLAyout.setVisibility(View.VISIBLE);
                                                                     binding.BecomeCreaterLayout.setVisibility(View.GONE);
+                                                                    progressDialog.dismiss();
                                                                 }
                                                             }).addOnFailureListener(new OnFailureListener() {
                                                                 @Override
@@ -357,14 +361,14 @@ public class CommonActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     list.clear();
-                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                            VideoModel model = dataSnapshot.getValue(VideoModel.class);
-                            String addedBy = model.getAddedBy();
-                            String myId = FirebaseAuth.getInstance().getUid();
-                            if (addedBy.equals(myId)) {
-                                list.add(model);
-                            }
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        VideoModel model = dataSnapshot.getValue(VideoModel.class);
+                        String addedBy = model.getAddedBy();
+                        String myId = FirebaseAuth.getInstance().getUid();
+                        if (addedBy.equals(myId)) {
+                            list.add(model);
                         }
+                    }
                 }
 
                 @Override
@@ -681,6 +685,8 @@ public class CommonActivity extends AppCompatActivity {
             binding.EDITbtnBecomeCreater.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    progressDialog.setMessage("Please Wait");
+                    progressDialog.show();
                     if (uri != null) {
                         StorageReference reference = FirebaseStorage.getInstance().getReference().child("Profile").child(FirebaseAuth.getInstance().getUid());
                         reference.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -690,8 +696,7 @@ public class CommonActivity extends AppCompatActivity {
                                     @Override
                                     public void onSuccess(Uri uri) {
                                         database.getReference().child("Creaters").child(FirebaseAuth.getInstance().getUid()).child("profileImage").setValue(uri.toString());
-                                        Toast.makeText(CommonActivity.this, "Profile Updated", Toast.LENGTH_SHORT).show();
-                                    }
+                                        }
                                 });
                             }
                         });
@@ -705,8 +710,7 @@ public class CommonActivity extends AppCompatActivity {
                                     @Override
                                     public void onSuccess(Uri uri) {
                                         database.getReference().child("Creaters").child(FirebaseAuth.getInstance().getUid()).child("backgroundImage").setValue(uri.toString());
-                                        Toast.makeText(CommonActivity.this, "Background Updated", Toast.LENGTH_SHORT).show();
-                                    }
+                                        }
                                 });
                             }
                         });
@@ -718,7 +722,8 @@ public class CommonActivity extends AppCompatActivity {
                     database.getReference().child("Creaters").child(FirebaseAuth.getInstance().getUid()).child("twitterLink").setValue(binding.EditTwitterLink.getText().toString());
                     database.getReference().child("Creaters").child(FirebaseAuth.getInstance().getUid()).child("facebookLink").setValue(binding.EditFacebookLink.getText().toString());
                     database.getReference().child("Creaters").child(FirebaseAuth.getInstance().getUid()).child("userName").setValue(binding.EDITEtUserNAme.getText().toString());
-
+                    Toast.makeText(CommonActivity.this, "Profile Updated", Toast.LENGTH_SHORT).show();
+                    progressDialog.dismiss();
                 }
             });
         }

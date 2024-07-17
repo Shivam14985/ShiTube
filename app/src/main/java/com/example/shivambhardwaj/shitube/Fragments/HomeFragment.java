@@ -1383,7 +1383,7 @@ public class HomeFragment extends Fragment {
                     } else {
                     }
                 }
-                adapter.notifyDataSetChanged();
+
             }
 
             @Override

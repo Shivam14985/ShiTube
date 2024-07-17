@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.shivambhardwaj.shitube.Activities.ViewVideoActivity;
+import com.example.shivambhardwaj.shitube.Models.CreatersModel;
 import com.example.shivambhardwaj.shitube.Models.VideoModel;
 import com.example.shivambhardwaj.shitube.R;
 import com.example.shivambhardwaj.shitube.databinding.UserHistoryLayoutBinding;
@@ -71,6 +72,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.viewHold
                 context.startActivity(intent);
                 FirebaseDatabase.getInstance().getReference().child("Videos").child(videoModel.getPostId()).child("viewedBy").child(FirebaseAuth.getInstance().getUid()).setValue("true");
                 FirebaseDatabase.getInstance().getReference().child("Videos").child(videoModel.getPostId()).child("viewsCount").setValue(videoModel.getViewsCount() + 1);
+
             }
         });
     }

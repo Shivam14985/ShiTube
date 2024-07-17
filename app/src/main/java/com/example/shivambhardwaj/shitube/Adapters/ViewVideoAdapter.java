@@ -81,6 +81,7 @@ public class ViewVideoAdapter extends RecyclerView.Adapter<ViewVideoAdapter.view
                 ((Activity)context).finish();
                 FirebaseDatabase.getInstance().getReference().child("Videos").child(model.getPostId()).child("viewedBy").child(FirebaseAuth.getInstance().getUid()).setValue("true");
                 FirebaseDatabase.getInstance().getReference().child("Videos").child(model.getPostId()).child("viewsCount").setValue(model.getViewsCount() + 1);
+
             }
         });
         holder.binding.moreotion.setOnClickListener(new View.OnClickListener() {

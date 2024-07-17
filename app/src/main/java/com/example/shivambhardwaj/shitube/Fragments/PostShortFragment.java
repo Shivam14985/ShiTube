@@ -43,7 +43,7 @@ public class PostShortFragment extends Fragment {
     Uri ThumnailUri;
     StorageReference storageReference;
     DatabaseReference databaseReference;
-
+    VideoModel videoModel = new VideoModel();
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -82,7 +82,6 @@ public class PostShortFragment extends Fragment {
                             final ProgressDialog dialog = new ProgressDialog(getContext());
                             dialog.setTitle("Uploading....");
                             dialog.show();
-                            VideoModel videoModel = new VideoModel();
 
                             final StorageReference storageReference1 = FirebaseStorage.getInstance().getReference().child("Thumbnails").child(new Date().getTime() + "");
                             storageReference1.putFile(ThumnailUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -236,7 +235,24 @@ public class PostShortFragment extends Fragment {
         if (requestCode == 101 && resultCode == RESULT_OK) {
             videoUri = data.getData();
             binding.videoView.setVideoURI(videoUri);
-            binding.upload.setVisibility(View.VISIBLE);
+            binding.videoView.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    long duration=binding.videoView.getDuration();
+                    if (duration<60000){
+                        binding.upload.setVisibility(View.VISIBLE);
+                        videoModel.setDuration(duration);
+                    }
+                    else {
+                        Snackbar snackbar = Snackbar.make(getView(),"Video Length is too long",Toast.LENGTH_LONG);
+                        snackbar.setBackgroundTint(Color.rgb(255, 0, 0));
+                        snackbar.setTextColor(Color.rgb(255, 255, 255));
+                        snackbar.setDuration(5000);
+                        snackbar.show();
+                        binding.upload.setVisibility(View.GONE);
+                    }
+                }
+            },500);
         }
         if (requestCode == 100 && resultCode == RESULT_OK) {
             if (data.getData() != null) {

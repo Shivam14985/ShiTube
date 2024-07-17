@@ -112,6 +112,9 @@
                 android:id="@+id/editTextText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="15dp"
                 android:hint="Enter Title Of Your Video"
                 android:inputType="textCapWords"
                 android:textColorHint="@color/Gray" />
@@ -120,12 +123,18 @@
                 android:id="@+id/SelectThumnail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="15dp"
                 android:text="Select Thumnail" />
 
             <ImageView
                 android:id="@+id/ThumnailImage"
                 android:layout_width="match_parent"
                 android:layout_height="210dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="15dp"
                 android:scaleType="centerCrop"
                 android:visibility="gone" />
 
@@ -133,18 +142,33 @@
                 android:id="@+id/Description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="15dp"
                 android:hint="Enter Description"
                 android:inputType="textCapWords"
+                android:textColorHint="@color/Gray"></EditText>
+
+            <EditText
+                android:id="@+id/Duration"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="15dp"
+                android:enabled="false"
+                android:hint="Video Duration"
+                android:inputType="none"
                 android:textColorHint="@color/Gray"></EditText>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textInputLayout4"
                 style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginStart="20dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginEnd="20dp"
+                android:layout_marginEnd="15dp"
                 android:hint="Select Category of Video"
                 android:textColorHint="@color/Gray">
 
@@ -152,8 +176,6 @@
                     android:id="@+id/Et_Category"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
                     android:background="#00FFFFFF"
                     android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -162,6 +184,9 @@
                 android:id="@+id/approval"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="15dp"
                 android:textColor="@color/black"
                 android:visibility="gone"></TextView>
 
@@ -169,6 +194,9 @@
                 android:id="@+id/UplaodToFirebase"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="15dp"
                 android:enabled="false"
                 android:text="Upload Video" />
 

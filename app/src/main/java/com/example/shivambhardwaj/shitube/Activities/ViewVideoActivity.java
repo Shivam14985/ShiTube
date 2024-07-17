@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -759,6 +760,7 @@ public class ViewVideoActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     VideoModel videoModel = snapshot.getValue(VideoModel.class);
+
                     binding.commentsdes.setText("Comments " + videoModel.getCommentsCount());
                     binding.VideoTitle.setText(videoModel.getTitle());
                     String time = TimeAgo.using(videoModel.getAddedAt());
@@ -1144,6 +1146,15 @@ public class ViewVideoActivity extends AppCompatActivity {
                                     public void onClick(View v) {
                                         int likes = videoModel.getLikesCount() + 1;
                                         videoModel.setLikesCount(likes);
+                                        binding.likedAnimationBlast.playAnimation();
+                                        binding.likedAnimationBlast.setVisibility(View.VISIBLE);
+                                        binding.likedAnimationBlast.addAnimatorListener(new AnimatorListenerAdapter() {
+                                            @Override
+                                            public void onAnimationEnd(@NonNull Animator animation, boolean isReverse) {
+                                                super.onAnimationEnd(animation, isReverse);
+                                                binding.likedAnimationBlast.setVisibility(View.GONE);
+                                            }
+                                        });
                                         database.getReference().child("Videos").child(videoModel.getPostId()).child("likesCount").setValue(likes);
                                         NotificationModel notificationModel = new NotificationModel();
                                         notificationModel.setVideoId(videoModel.getPostId());
@@ -1457,7 +1468,7 @@ public class ViewVideoActivity extends AppCompatActivity {
                             handler.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    loadInterstitialAds();
+                                    interstitialAd.show(ViewVideoActivity.this);
                                 }
                             }, 100000);
                         } else if (model.getDuration() > 300000 && model.getDuration() < 900000) {
@@ -1465,7 +1476,7 @@ public class ViewVideoActivity extends AppCompatActivity {
                             handler.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    loadInterstitialAds();
+                                    interstitialAd.show(ViewVideoActivity.this);
                                 }
                             }, 225000);
                         } else if (model.getDuration() > 900000 && model.getDuration() < 1800000) {
@@ -1473,7 +1484,7 @@ public class ViewVideoActivity extends AppCompatActivity {
                             handler.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    loadInterstitialAds();
+                                    interstitialAd.show(ViewVideoActivity.this);
                                 }
                             }, 300000);
                         } else if (model.getDuration() > 1800000 && model.getDuration() < 3600000) {
@@ -1481,7 +1492,7 @@ public class ViewVideoActivity extends AppCompatActivity {
                             handler.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    loadInterstitialAds();
+                                    interstitialAd.show(ViewVideoActivity.this);
                                 }
                             }, 400000);
                         } else if (model.getDuration() > 3600000) {
@@ -1489,11 +1500,12 @@ public class ViewVideoActivity extends AppCompatActivity {
                             handler.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    loadInterstitialAds();
+                                    interstitialAd.show(ViewVideoActivity.this);
                                 }
                             }, 600000);
                         }
-                        exoPlayer.play();
+                            exoPlayer.play();
+
                     }
                 });
 

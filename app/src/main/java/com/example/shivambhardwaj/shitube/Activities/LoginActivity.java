@@ -41,12 +41,18 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.concurrent.TimeUnit;
 
 public class LoginActivity extends AppCompatActivity {
     // Evaluating ChannelID and Description for the Custom Notification
@@ -61,11 +67,45 @@ public class LoginActivity extends AppCompatActivity {
     });
     ActivityLoginBinding binding;
     FirebaseAuth auth;
+    private final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult o) {
+            if (o.getResultCode() == RESULT_OK) {
+                Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(o.getData());
+                try {
+                    GoogleSignInAccount account = task.getResult(ApiException.class);
+                    AuthCredential authCredential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+                    auth.signInWithCredential(authCredential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                String NAme = auth.getCurrentUser().getDisplayName();
+                                String Email = auth.getCurrentUser().getEmail();
+                                UsersModel usersModel = new UsersModel(NAme, Email);
+                                FirebaseDatabase.getInstance().getReference().child("Users").child(task.getResult().getUser().getUid()).setValue(usersModel);
+                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                startActivity(intent);
+                            } else {
+                                Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                } catch (ApiException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    });
     // Assigning variables to Notification Manager, Channel and Builder
     NotificationManager notifManager;
     NotificationChannel notifChannel;
     Notification.Builder notifBuilder;
     GoogleSignInClient mGoogleSignInClient;
+    ProgressDialog progressDialog;
+    String phoneNumber, otp;
+    PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallback;
+    private String verificationCode;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +117,7 @@ public class LoginActivity extends AppCompatActivity {
         // Notification Service for the Manager
         notifManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
+        StartFirebaseLogin();
         //SignIn button
         binding.signInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,8 +127,11 @@ public class LoginActivity extends AppCompatActivity {
                 String Email = binding.EtEmail.getText().toString();
                 String Password = binding.EtPassword.getText().toString();
 
-                if (Email.isEmpty() && Password.isEmpty()) {
-                    Toast.makeText(LoginActivity.this, "Please Enter Above details", Toast.LENGTH_SHORT).show();
+                if (Email.isEmpty() || Password.isEmpty()) {
+                    Snackbar snackbar= Snackbar.make(v, "Fill above fields", Snackbar.LENGTH_SHORT);
+                    snackbar.setTextColor(Color.WHITE);
+                    snackbar.setBackgroundTint(Color.RED);
+                    snackbar.show();
                 } else {
                     progressDialog.show();
                     auth.signInWithEmailAndPassword(Email, Password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -135,7 +179,11 @@ public class LoginActivity extends AppCompatActivity {
                                 // the Builder which built a Notification for the application
                                 notifManager.notify(1234, notifBuilder.build());
                             } else {
-                                Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                Snackbar snackbar= Snackbar.make(v, task.getException().getLocalizedMessage(), Snackbar.LENGTH_SHORT);
+                                snackbar.setTextColor(Color.WHITE);
+                                snackbar.setBackgroundTint(Color.GREEN);
+                                snackbar.show();
+
                             }
                         }
                     });
@@ -166,29 +214,104 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        progressDialog = new ProgressDialog(LoginActivity.this);
+        progressDialog.setMessage("Signing In");
+
         binding.ResetPAssword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String Email = binding.EtEmailForgot.getText().toString();
                 if (Email.isEmpty()) {
-                    Toast.makeText(LoginActivity.this, "Enter Email First", Toast.LENGTH_SHORT).show();
+                    Snackbar snackbar= Snackbar.make(v, "Enter Email First", Snackbar.LENGTH_SHORT);
+                    snackbar.setTextColor(Color.WHITE);
+                    snackbar.setBackgroundTint(Color.RED);
+                    snackbar.show();
+
                 } else {
                     auth.sendPasswordResetEmail(Email).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {
-                            Toast.makeText(LoginActivity.this, "Reset password link has send to your Email ", Toast.LENGTH_LONG).show();
+                            Snackbar snackbar= Snackbar.make(v, "Reset password link has send to your Email ", Snackbar.LENGTH_SHORT);
+                            snackbar.setTextColor(Color.WHITE);
+                            snackbar.setBackgroundTint(Color.GREEN);
+                            snackbar.show();
                             binding.SignInLAyout.setVisibility(View.VISIBLE);
                             binding.ForgotPAssWordLAyout.setVisibility(View.GONE);
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Snackbar snackbar= Snackbar.make(v, e.getLocalizedMessage(), Snackbar.LENGTH_SHORT);
+                            snackbar.setTextColor(Color.WHITE);
+                            snackbar.setBackgroundTint(Color.RED);
+                            snackbar.show();
+
                         }
                     });
                 }
             }
         });
+        binding.GoToOTpSignIN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                binding.SignInLAyout.setVisibility(View.GONE);
+                binding.SignInWithOtpLayout.setVisibility(View.VISIBLE);
+            }
+        });
+        binding.back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                binding.SignInWithOtpLayout.setVisibility(View.GONE);
+                binding.SignInLAyout.setVisibility(View.VISIBLE);
+            }
+        });
+
+        binding.SendOtp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (binding.Phone.getText().toString().isEmpty()) {
+                    Snackbar snackbar = Snackbar.make(v, "Enter Number", Snackbar.LENGTH_SHORT);
+                    snackbar.setBackgroundTint(Color.RED);
+                    snackbar.setTextColor(Color.WHITE);
+                    snackbar.show();
+                }
+                if (binding.Phone.getMinEms() < 10){
+                    Snackbar snackbar = Snackbar.make(v, "Enter Valid Number", Snackbar.LENGTH_SHORT);
+                    snackbar.setBackgroundTint(Color.RED);
+                    snackbar.setTextColor(Color.WHITE);
+                    snackbar.show();
+                }else{
+                binding.Success.setVisibility(View.GONE);
+                binding.Failed.setVisibility(View.GONE);
+                binding.progressBar.setVisibility(View.VISIBLE);
+                phoneNumber = binding.Phone.getText().toString();
+                PhoneAuthProvider.getInstance().verifyPhoneNumber("+91" + phoneNumber,                // Phone number to verify
+                        60,                           // Timeout duration
+                        TimeUnit.SECONDS,                // Unit of timeout
+                        LoginActivity.this,        // Activity (for callback binding)
+                        mCallback);                      // OnVerificationStateChangedCallbacks
+            }}
+        });
+
+        binding.SubmitOtp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (binding.otpsubmit.getText().toString().isEmpty()){
+                    Snackbar snackbar = Snackbar.make(v, "Enter Otp First", Snackbar.LENGTH_SHORT);
+                    snackbar.setBackgroundTint(Color.RED);
+                    snackbar.setTextColor(Color.WHITE);
+                    snackbar.show();
+                }
+                else {
+                    progressDialog.show();
+                    otp = binding.otpsubmit.getText().toString();
+                    PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationCode, otp);
+                    SigninWithPhone(credential);
+                }
+            }
+        });
+
+
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.clientId))
                 .requestEmail()
@@ -227,34 +350,51 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
     }
-    private final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-        @Override
-        public void onActivityResult(ActivityResult o) {
-            if (o.getResultCode() == RESULT_OK) {
-                Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(o.getData());
-                try {
-                    GoogleSignInAccount account = task.getResult(ApiException.class);
-                    AuthCredential authCredential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
-                    auth.signInWithCredential(authCredential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                String NAme=auth.getCurrentUser().getDisplayName();
-                                String Email=auth.getCurrentUser().getEmail();
-                                UsersModel usersModel =new UsersModel(NAme,Email);
-                                FirebaseDatabase.getInstance().getReference().child("Users").child(task.getResult().getUser().getUid()).setValue(usersModel);
-                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                startActivity(intent);
-                            } else {
-                                Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-                } catch (ApiException e) {
-                    throw new RuntimeException(e);
+
+    private void SigninWithPhone(PhoneAuthCredential credential) {
+        auth.signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    progressDialog.dismiss();
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+
+                } else {
+                    progressDialog.dismiss();
+                    Toast.makeText(LoginActivity.this, "Incorrect OTP", Toast.LENGTH_SHORT).show();
                 }
             }
-        }
-    });
+        });
+    }
 
+    private void StartFirebaseLogin() {
+
+        auth = FirebaseAuth.getInstance();
+        mCallback = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+            @Override
+            public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
+                Toast.makeText(LoginActivity.this, "verification completed", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onVerificationFailed(FirebaseException e) {
+                Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                binding.progressBar.setVisibility(View.GONE);
+                binding.Failed.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onCodeSent(String s, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
+                super.onCodeSent(s, forceResendingToken);
+                verificationCode = s;
+                binding.progressBar.setVisibility(View.GONE);
+                binding.Success.setVisibility(View.VISIBLE);
+                binding.SendOtp.setVisibility(View.GONE);
+                binding.otpsubmitt.setVisibility(View.VISIBLE);
+                binding.SubmitOtp.setVisibility(View.VISIBLE);
+                Toast.makeText(LoginActivity.this, "Code sent to " + phoneNumber, Toast.LENGTH_LONG).show();
+            }
+        };
+    }
 }

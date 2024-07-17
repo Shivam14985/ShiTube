@@ -38,6 +38,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -61,6 +62,35 @@ public class SignUpActivity extends AppCompatActivity {
     ActivitySignUpBinding binding;
     FirebaseAuth auth;
     FirebaseDatabase database;
+    private final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult o) {
+            if (o.getResultCode() == RESULT_OK) {
+                Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(o.getData());
+                try {
+                    GoogleSignInAccount account = task.getResult(ApiException.class);
+                    AuthCredential authCredential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+                    auth.signInWithCredential(authCredential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                String NAme = auth.getCurrentUser().getDisplayName();
+                                String Email = auth.getCurrentUser().getEmail();
+                                UsersModel usersModel = new UsersModel(NAme, Email);
+                                database.getReference().child("Users").child(task.getResult().getUser().getUid()).setValue(usersModel);
+                                Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
+                                startActivity(intent);
+                            } else {
+                                Toast.makeText(SignUpActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                } catch (ApiException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    });
     GoogleSignInClient mGoogleSignInClient;
 
     @Override
@@ -85,7 +115,11 @@ public class SignUpActivity extends AppCompatActivity {
                 String Name = binding.EtName.getText().toString();
                 String Password = binding.EtPassword.getText().toString();
                 if (binding.EtEmail.getText().toString().isEmpty() || binding.EtName.getText().toString().isEmpty() || binding.EtPassword.getText().toString().isEmpty()) {
-                    Toast.makeText(SignUpActivity.this, "Fill all details", Toast.LENGTH_SHORT).show();
+                    Snackbar snackbar= Snackbar.make(v, "Fill all fields", Snackbar.LENGTH_SHORT);
+                    snackbar.setTextColor(Color.WHITE);
+                    snackbar.setBackgroundTint(Color.RED);
+                    snackbar.show();
+
                 } else {
                     progressDialog.show();
                     auth.createUserWithEmailAndPassword(Email, Password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -144,7 +178,10 @@ public class SignUpActivity extends AppCompatActivity {
                                     }
                                 }, 4500);
                             } else {
-                                Toast.makeText(SignUpActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                Snackbar snackbar= Snackbar.make(v, task.getException().getLocalizedMessage(), Snackbar.LENGTH_SHORT);
+                                snackbar.setTextColor(Color.WHITE);
+                                snackbar.setBackgroundTint(Color.RED);
+                                snackbar.show();
                             }
                         }
                     });
@@ -160,6 +197,7 @@ public class SignUpActivity extends AppCompatActivity {
                 finish();
             }
         });
+
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.clientId))
                 .requestEmail()
@@ -173,7 +211,13 @@ public class SignUpActivity extends AppCompatActivity {
                 activityResultLauncher.launch(signInIntent);
             }
         });
-
+        binding.AuthPhone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SignUpActivity.this, OtpAuthenticationActivity.class);
+                startActivity(intent);
+            }
+        });
         askNotificationPermission();
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -192,34 +236,5 @@ public class SignUpActivity extends AppCompatActivity {
             }
         }
     }
-    private final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-        @Override
-        public void onActivityResult(ActivityResult o) {
-            if (o.getResultCode() == RESULT_OK) {
-                Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(o.getData());
-                try {
-                    GoogleSignInAccount account = task.getResult(ApiException.class);
-                    AuthCredential authCredential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
-                    auth.signInWithCredential(authCredential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                String NAme=auth.getCurrentUser().getDisplayName();
-                                String Email=auth.getCurrentUser().getEmail();
-                                UsersModel usersModel =new UsersModel(NAme,Email);
-                                database.getReference().child("Users").child(task.getResult().getUser().getUid()).setValue(usersModel);
-                                Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
-                                startActivity(intent);
-                            } else {
-                                Toast.makeText(SignUpActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-                } catch (ApiException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-    });
 
 }

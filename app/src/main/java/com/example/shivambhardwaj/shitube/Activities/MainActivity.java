@@ -7,6 +7,8 @@ import android.content.res.Configuration;
 import android.graphics.drawable.Icon;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -46,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
         }
     });
+    //Double press back to exit app
+    boolean doubleBackToExitPressedOnce = false;
     ActivityMainBinding binding;
     AdView adView;
 
@@ -202,6 +206,23 @@ public class MainActivity extends AppCompatActivity {
         if (fragment instanceof MyProfileFragment) {
             ((MyProfileFragment) fragment).onConfigurationChanged(newConfig);
         }
+    }
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            finishAffinity();
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Press again to exit", Toast.LENGTH_SHORT).show();
+
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce = false;
+            }
+        }, 2000);
     }
 
 }

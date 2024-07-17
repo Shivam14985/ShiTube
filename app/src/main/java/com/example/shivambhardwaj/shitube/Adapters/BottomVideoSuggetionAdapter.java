@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.shivambhardwaj.shitube.Activities.ViewVideoActivity;
+import com.example.shivambhardwaj.shitube.Models.CreatersModel;
 import com.example.shivambhardwaj.shitube.Models.VideoModel;
 import com.example.shivambhardwaj.shitube.R;
 import com.example.shivambhardwaj.shitube.databinding.BottomVideosSuggetionBinding;
@@ -44,23 +45,23 @@ public class BottomVideoSuggetionAdapter extends RecyclerView.Adapter<BottomVide
         VideoModel videoModel = list.get(position);
         holder.binding.VideoTitle.setText(videoModel.getTitle());
         holder.binding.channelName.setText(videoModel.getChannelName());
-        FirebaseDatabase.getInstance().getReference().child("Videos").child(videoModel.getPostId()).child("lastSeen").child(FirebaseAuth.getInstance().getUid()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    int lastWatched = snapshot.getValue().hashCode();
-                    int percentage = (int) (lastWatched * 100 / videoModel.getDuration());
-//                    holder.binding.progressBar.setProgress(percentage);
-                } else {
-//                    holder.binding.progressBar.setProgress(0);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+//        FirebaseDatabase.getInstance().getReference().child("Videos").child(videoModel.getPostId()).child("lastSeen").child(FirebaseAuth.getInstance().getUid()).addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                if (snapshot.exists()) {
+//                    int lastWatched = snapshot.getValue().hashCode();
+//                    int percentage = (int) (lastWatched * 100 / videoModel.getDuration());
+////                    holder.binding.progressBar.setProgress(percentage);
+//                } else {
+////                    holder.binding.progressBar.setProgress(0);
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
         Picasso.get().load(videoModel.getThumbnail()).placeholder(R.drawable.bg_edittext).into(holder.binding.ThumnailImage);
         //Click To View Video
         holder.binding.recyclerView.setOnClickListener(new View.OnClickListener() {
@@ -72,7 +73,7 @@ public class BottomVideoSuggetionAdapter extends RecyclerView.Adapter<BottomVide
                 ((Activity) context).finish();
                 FirebaseDatabase.getInstance().getReference().child("Videos").child(videoModel.getPostId()).child("viewedBy").child(FirebaseAuth.getInstance().getUid()).setValue("true");
                 FirebaseDatabase.getInstance().getReference().child("Videos").child(videoModel.getPostId()).child("viewsCount").setValue(videoModel.getViewsCount() + 1);
-            }
+               }
         });
     }
 

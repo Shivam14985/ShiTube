@@ -37,16 +37,33 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/like"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@drawable/like"
-                app:layout_constraintBottom_toBottomOf="parent"
+            <androidx.cardview.widget.CardView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:cardCornerRadius="50dp"
+                app:layout_constraintBottom_toBottomOf="@+id/liked_blast_animation"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/white"></ImageView>
+                app:layout_constraintStart_toStartOf="@+id/liked_blast_animation"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:id="@+id/like"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/like"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="@color/white"></ImageView>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
             <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/liked_blast_animation"
@@ -69,12 +86,25 @@
             android:textColor="@color/white"
             android:textStyle="bold" />
 
-        <ImageView
-            android:id="@+id/Comments"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+        <androidx.cardview.widget.CardView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_marginTop="25dp"
-            android:src="@drawable/shorts_comment"></ImageView>
+            app:cardCornerRadius="50dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/Comments"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/shorts_comment"></ImageView>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
 
         <TextView
             android:id="@+id/commentcount"
@@ -85,13 +115,25 @@
             android:textColor="@color/white"
             android:textStyle="bold" />
 
-        <ImageView
-            android:id="@+id/download"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
+        <androidx.cardview.widget.CardView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_marginTop="25dp"
-            android:padding="3dp"
-            android:src="@drawable/downloadwhite"></ImageView>
+            app:cardCornerRadius="50dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/download"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:padding="3dp"
+                    android:src="@drawable/downloadwhite"></ImageView>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
         <TextView
             android:layout_width="wrap_content"
@@ -101,13 +143,25 @@
             android:textColor="@color/white"
             android:textStyle="bold" />
 
-        <ImageView
-            android:id="@+id/Share"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+        <androidx.cardview.widget.CardView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_marginTop="25dp"
-            android:padding="3dp"
-            android:src="@drawable/shorts_share"></ImageView>
+            app:cardCornerRadius="50dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/Share"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:padding="3dp"
+                    android:src="@drawable/shorts_share"></ImageView>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
         <TextView
             android:layout_width="wrap_content"
@@ -123,9 +177,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/linearLayout2"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent">
 
         <LinearLayout

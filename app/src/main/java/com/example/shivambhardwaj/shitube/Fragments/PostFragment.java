@@ -1,5 +1,6 @@
 package com.example.shivambhardwaj.shitube.Fragments;
 
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -70,5 +71,18 @@ public class PostFragment extends Fragment {
         } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
 
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Lock the orientation to portrait
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        // Unlock the orientation
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
     }
 }

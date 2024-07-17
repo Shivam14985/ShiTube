@@ -183,7 +183,7 @@ public class OthersProfileViewActivity extends AppCompatActivity {
 
                     Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/shitube-173fe.appspot.com/o/Icons%20For%20App%2Finternet.png?alt=media&token=fb524c41-b569-46ea-ba8a-b163e8ca8b6a").into(binding.WebsiteImage);
                     Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/shitube-173fe.appspot.com/o/Icons%20For%20App%2Finformation.png?alt=media&token=8b98a1fc-0210-4bb6-8069-170ff51d68a4").into(binding.JoinedOn);
-                    Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/shitube-173fe.appspot.com/o/Icons%20For%20App%2Fgrow-up.png?alt=media&token=8afd4e6c-9fde-4fcd-a618-13920979e6d8").into(binding.growth);
+//                    Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/shitube-173fe.appspot.com/o/Icons%20For%20App%2Fgrow-up.png?alt=media&token=8afd4e6c-9fde-4fcd-a618-13920979e6d8").into(binding.growth);
                     Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/shitube-173fe.appspot.com/o/Icons%20For%20App%2Finstagram.png?alt=media&token=6848c167-4e12-4840-8ad8-51e4b237118e").into(binding.InstagramImage);
                     Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/shitube-173fe.appspot.com/o/Icons%20For%20App%2Ftwitter.png?alt=media&token=c42789e9-f329-4ce7-8e12-6f47c9734ab0").into(binding.TwitterImage);
                     Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/shitube-173fe.appspot.com/o/Icons%20For%20App%2Ffacebook.png?alt=media&token=c3dba9b8-7a24-4f4e-b3fe-d77b00a31a3b").into(binding.facebookImage);
@@ -197,6 +197,7 @@ public class OthersProfileViewActivity extends AppCompatActivity {
                             binding.facebookLink.setText(model.getFacebookLink());
                             binding.InstagramLink.setText(model.getInstagramLink());
                             binding.TwitterLink.setText(model.getTwitterLink());
+
 
                             calendar = Calendar.getInstance();
                             calendar.setTimeInMillis(model.getJoinedOn());
