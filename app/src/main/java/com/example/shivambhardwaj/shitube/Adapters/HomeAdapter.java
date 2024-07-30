@@ -115,9 +115,6 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.viewHolder> {
                             intent.setType("text/plain");
                             context.startActivity(Intent.createChooser(intent, "Share Via"));
                         }
-                        if (item.getItemId() == R.id.report) {
-                            Toast.makeText(context, "Reporting", Toast.LENGTH_SHORT).show();
-                        }
                         if (item.getItemId() == R.id.save) {
                             FirebaseDatabase.getInstance().getReference().child("Videos").child(model.getPostId()).child("watchLater").child(FirebaseAuth.getInstance().getUid()).setValue("true");
                             Toast.makeText(context, "Video Saved", Toast.LENGTH_SHORT).show();

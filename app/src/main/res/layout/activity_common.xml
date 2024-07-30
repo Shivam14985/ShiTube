@@ -212,7 +212,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
-                    android:hint="Enter Instagram Link"
+                    android:hint="Enter Facebook Link"
                     android:inputType="text"
                     android:textColor="@color/black"
                     android:textColorHint="@color/textColorGray" />
@@ -222,7 +222,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
-                    android:hint="Enter TWitter Link"
+                    android:hint="Enter Twitter Link"
                     android:inputType="text"
                     android:textColor="@color/black"
                     android:textColorHint="@color/textColorGray" />

@@ -81,5 +81,6 @@ dependencies {
     implementation ("com.squareup.retrofit2:converter-gson:2.11.0")
     //google signin
     implementation("com.google.android.gms:play-services-auth:21.2.0")
+    implementation("com.github.AppIntro:AppIntro:6.0.0")
 
 }

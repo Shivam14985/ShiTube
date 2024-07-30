@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -201,8 +202,9 @@ public class PostVideoFragment extends Fragment {
                                                                                 snackbar.setBackgroundTint(Color.rgb(5, 146, 18));
                                                                                 snackbar.setTextColor(Color.rgb(252, 252, 252));
                                                                                 snackbar.show();
+
                                                                             }if (creatersModel.getAdmin().equals("false")){
-                                                                                Snackbar snackbar= Snackbar.make(view, "Review Pending", Snackbar.LENGTH_INDEFINITE);
+                                                                                Snackbar snackbar= Snackbar.make(view, "Review Pending", Snackbar.LENGTH_LONG);
                                                                                 snackbar.setBackgroundTint(Color.rgb(200, 0, 54));
                                                                                 snackbar.setTextColor(Color.rgb(255, 255, 255));
                                                                                 snackbar.setActionTextColor(Color.rgb(255, 255, 255));

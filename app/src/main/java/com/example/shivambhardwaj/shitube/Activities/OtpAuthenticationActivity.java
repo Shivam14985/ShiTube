@@ -1,8 +1,11 @@
 package com.example.shivambhardwaj.shitube.Activities;
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -15,6 +18,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.shivambhardwaj.shitube.R;
+import com.example.shivambhardwaj.shitube.Services.NetworkBroadcast;
 import com.example.shivambhardwaj.shitube.databinding.ActivityOtpAuthenticationBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -36,6 +40,7 @@ public class OtpAuthenticationActivity extends AppCompatActivity {
     String phoneNumber, otp;
     PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallback;
     private String verificationCode;
+    private BroadcastReceiver broadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +48,8 @@ public class OtpAuthenticationActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         binding = ActivityOtpAuthenticationBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        broadcastReceiver = new NetworkBroadcast();
+        registerReceiver(broadcastReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Registering");
 
@@ -72,6 +78,7 @@ public class OtpAuthenticationActivity extends AppCompatActivity {
                 }, 100);
                 Intent intent = new Intent(OtpAuthenticationActivity.this, SignUpActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
         binding.SendOtp.setOnClickListener(new View.OnClickListener() {
@@ -176,5 +183,11 @@ public class OtpAuthenticationActivity extends AppCompatActivity {
                 Toast.makeText(OtpAuthenticationActivity.this, "Code sent to " + phoneNumber, Toast.LENGTH_LONG).show();
             }
         };
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(broadcastReceiver);
     }
 }

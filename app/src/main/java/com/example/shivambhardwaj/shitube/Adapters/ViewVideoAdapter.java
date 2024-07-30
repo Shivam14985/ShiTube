@@ -113,9 +113,7 @@ public class ViewVideoAdapter extends RecyclerView.Adapter<ViewVideoAdapter.view
                             shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
                             context.startActivity(Intent.createChooser(shareIntent, "Share via"));
                         }
-                        if (item.getItemId() == R.id.report) {
-                            Toast.makeText(context, "Reporting", Toast.LENGTH_SHORT).show();
-                        }
+
                         if (item.getItemId()==R.id.save){
                             FirebaseDatabase.getInstance().getReference().child("Videos").child(model.getPostId()).child("watchLater").child(FirebaseAuth.getInstance().getUid()).setValue("true");
                             Toast.makeText(context, "Video Saved", Toast.LENGTH_SHORT).show();

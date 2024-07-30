@@ -1,6 +1,10 @@
 package com.example.shivambhardwaj.shitube.Services;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
@@ -22,6 +26,10 @@ public class FirebaseCloudMessaging extends FirebaseMessagingService {
                 .setContentText(body)
                 .setAutoCancel(true);
         NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+
+            return;
+        }
         managerCompat.notify(101, builder.build());
     }
 }

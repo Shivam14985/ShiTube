@@ -7,12 +7,15 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -31,6 +34,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.shivambhardwaj.shitube.Models.UsersModel;
 import com.example.shivambhardwaj.shitube.R;
+import com.example.shivambhardwaj.shitube.Services.NetworkBroadcast;
 import com.example.shivambhardwaj.shitube.databinding.ActivityLoginBinding;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -67,6 +71,7 @@ public class LoginActivity extends AppCompatActivity {
     });
     ActivityLoginBinding binding;
     FirebaseAuth auth;
+    private BroadcastReceiver broadcastReceiver;
     private final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult o) {
@@ -113,6 +118,9 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         auth = FirebaseAuth.getInstance();
         FirebaseApp.initializeApp(LoginActivity.this);
+
+        broadcastReceiver = new NetworkBroadcast();
+        registerReceiver(broadcastReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
         // Notification Service for the Manager
         notifManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -396,5 +404,11 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(LoginActivity.this, "Code sent to " + phoneNumber, Toast.LENGTH_LONG).show();
             }
         };
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(broadcastReceiver);
     }
 }

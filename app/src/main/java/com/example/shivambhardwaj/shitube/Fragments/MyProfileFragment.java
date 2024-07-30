@@ -53,13 +53,69 @@ public class MyProfileFragment extends Fragment {
 
         }
 
+        Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/shitube-173fe.appspot.com/o/Icons%20For%20App%2Finstagram.png?alt=media&token=6848c167-4e12-4840-8ad8-51e4b237118e").into(binding.Instagram);
+        binding.Instagram.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("https://www.instagram.com/shivambhardwaj26_07/"));
+                startActivity(intent);
+            }
+        });
+        Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/shitube-173fe.appspot.com/o/Icons%20For%20App%2Ftwitter.png?alt=media&token=c42789e9-f329-4ce7-8e12-6f47c9734ab0").into(binding.TwitterImage);
+        binding.TwitterImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("https://x.com/ShivamB93657571"));
+                startActivity(intent);
+            }
+        });
+        Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/shitube-173fe.appspot.com/o/Icons%20For%20App%2Fgithub.png?alt=media&token=44bb65a2-34ab-4816-90a8-40a323eaec4a").into(binding.Github);
+        binding.Github.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("https://github.com/Shivam14985"));
+                startActivity(intent);
+            }
+        });
+        Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/shitube-173fe.appspot.com/o/Icons%20For%20App%2Fgmail.png?alt=media&token=3e0203ba-f21e-4354-b459-a391173c805f").into(binding.Mail);
+        binding.Mail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("plain/text");
+                intent.putExtra(Intent.EXTRA_EMAIL, new String[] { "bhardwajshivam667@gmail.com" });
+                startActivity(Intent.createChooser(intent, null));
+            }
+        });
+        Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/shitube-173fe.appspot.com/o/Icons%20For%20App%2Flinkedin_logo.png?alt=media&token=d1cb517f-19d2-4259-a990-a57d93a3f2cf").into(binding.LinkedIn);
+        binding.LinkedIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("https://www.linkedin.com/in/shivam-bhardwaj-348491270/"));
+                startActivity(Intent.createChooser(intent,""));
+            }
+        });
+        Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/shitube-173fe.appspot.com/o/Icons%20For%20App%2Finternet.png?alt=media&token=fb524c41-b569-46ea-ba8a-b163e8ca8b6a").into(binding.Website);
+        binding.Website.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("https://shivam14985.github.io/PortPholio/"));
+                startActivity(intent);
+            }
+        });
+
         binding.historyshimmerFrameLayout.startShimmer();
         binding.profiledataShimmer.startShimmer();
 
         binding.moreOption.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PopupMenu popupMenu = new PopupMenu(getContext(),binding.moreOption);
+                PopupMenu popupMenu = new PopupMenu(getContext(), binding.moreOption);
                 popupMenu.getMenuInflater().inflate(R.menu.more_profile_options_menu, popupMenu.getMenu());
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
@@ -73,7 +129,7 @@ public class MyProfileFragment extends Fragment {
                         if (item.getItemId() == R.id.shareApp) {
                             Intent intent = new Intent();
                             intent.setAction(Intent.ACTION_SEND);
-                            intent.putExtra(Intent.EXTRA_TEXT, "\n" + "https://drive.google.com/drive/folders/1oaddC4CTr8IcrOjOLR24TXi5dMGkGE_j");
+                            intent.putExtra(Intent.EXTRA_TEXT, "Download ShiTube " + "https://drive.google.com/drive/folders/1oaddC4CTr8IcrOjOLR24TXi5dMGkGE_j");
                             intent.setType("text/plain");
                             startActivity(Intent.createChooser(intent, "Share Via"));
                         }
@@ -99,8 +155,8 @@ public class MyProfileFragment extends Fragment {
         //Show History
         ArrayList list = new ArrayList();
         HistoryAdapter adapter = new HistoryAdapter(list, getContext());
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        linearLayoutManager.setStackFromEnd(false);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, true);
+        linearLayoutManager.setStackFromEnd(true);
         binding.recyclerHistory.setLayoutManager(linearLayoutManager);
         binding.recyclerHistory.setAdapter(adapter);
 

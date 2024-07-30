@@ -1,9 +1,12 @@
 package com.example.shivambhardwaj.shitube.Activities;
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
@@ -27,6 +30,7 @@ import com.example.shivambhardwaj.shitube.Models.CreatersModel;
 import com.example.shivambhardwaj.shitube.Models.UsersModel;
 import com.example.shivambhardwaj.shitube.Models.VideoModel;
 import com.example.shivambhardwaj.shitube.R;
+import com.example.shivambhardwaj.shitube.Services.NetworkBroadcast;
 import com.example.shivambhardwaj.shitube.databinding.ActivityCommonBinding;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -49,7 +53,7 @@ public class CommonActivity extends AppCompatActivity {
     FirebaseStorage storage;
     Uri uri;
     Uri backImageUri;
-    ProgressDialog progressDialog = new ProgressDialog(CommonActivity.this);
+    private BroadcastReceiver broadcastReceiver;
 
     @Override
 
@@ -62,7 +66,8 @@ public class CommonActivity extends AppCompatActivity {
         storage = FirebaseStorage.getInstance();
         Intent intent = getIntent();
         String value = intent.getStringExtra("data");
-
+        broadcastReceiver = new NetworkBroadcast();
+        registerReceiver(broadcastReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         if (value.equals("Creater")) {
             binding.CreaterLayout.setVisibility(View.VISIBLE);
             binding.SelectProfile.setOnClickListener(new View.OnClickListener() {
@@ -166,6 +171,7 @@ public class CommonActivity extends AppCompatActivity {
             binding.btnBecomeCreater.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    ProgressDialog progressDialog = new ProgressDialog(CommonActivity.this);
                     progressDialog.setMessage("Please Wait");
                     progressDialog.show();
                     CreatersModel model = new CreatersModel();
@@ -173,7 +179,7 @@ public class CommonActivity extends AppCompatActivity {
                     String UserName = binding.EtUserNAme.getText().toString();
                     String Description = binding.EnterChannelDescription.getText().toString();
                     String Instagram = binding.EnterInstagramLink.getText().toString();
-                    String facebook = binding.EditFacebookLink.getText().toString();
+                    String facebook = binding.EnterFacebookLink.getText().toString();
                     String Twitter = binding.EnterTwitterLink.getText().toString();
                     String Website = binding.EnterWebsiteLink.getText().toString();
                     if (Name.isEmpty()) {
@@ -226,6 +232,7 @@ public class CommonActivity extends AppCompatActivity {
                                                                 @Override
                                                                 public void onFailure(@NonNull Exception e) {
                                                                     Toast.makeText(CommonActivity.this, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                                                                    progressDialog.dismiss();
                                                                 }
                                                             });
                                                         }
@@ -249,11 +256,13 @@ public class CommonActivity extends AppCompatActivity {
                                                     Toast.makeText(CommonActivity.this, "You are Creater now", Toast.LENGTH_SHORT).show();
                                                     binding.AlreadyCreatersLAyout.setVisibility(View.VISIBLE);
                                                     binding.BecomeCreaterLayout.setVisibility(View.GONE);
+                                                    progressDialog.dismiss();
                                                 }
                                             }).addOnFailureListener(new OnFailureListener() {
                                                 @Override
                                                 public void onFailure(@NonNull Exception e) {
                                                     Toast.makeText(CommonActivity.this, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                                                    progressDialog.dismiss();
                                                 }
                                             });
                                         }
@@ -685,6 +694,7 @@ public class CommonActivity extends AppCompatActivity {
             binding.EDITbtnBecomeCreater.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    ProgressDialog progressDialog = new ProgressDialog(CommonActivity.this);
                     progressDialog.setMessage("Please Wait");
                     progressDialog.show();
                     if (uri != null) {
@@ -853,7 +863,7 @@ public class CommonActivity extends AppCompatActivity {
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         VideoModel model = dataSnapshot.getValue(VideoModel.class);
                         String approved = dataSnapshot.child("approved").getValue().toString();
-                        if (approved.equals("false")) {
+                        if (approved.equals("Pending")) {
                             list.add(model);
                             String id = dataSnapshot.getKey().toString();
                             database.getReference().child("Videos").child(id).child("postId").setValue(id);
@@ -911,4 +921,9 @@ public class CommonActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(broadcastReceiver);
+    }
 }

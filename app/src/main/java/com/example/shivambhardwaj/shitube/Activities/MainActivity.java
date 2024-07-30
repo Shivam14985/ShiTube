@@ -1,10 +1,12 @@
 package com.example.shivambhardwaj.shitube.Activities;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.graphics.drawable.Icon;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,7 +14,6 @@ import android.os.Looper;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -31,6 +32,7 @@ import com.example.shivambhardwaj.shitube.Fragments.PostFragment;
 import com.example.shivambhardwaj.shitube.Fragments.ShortsFragment;
 import com.example.shivambhardwaj.shitube.Fragments.SubscriptionFragment;
 import com.example.shivambhardwaj.shitube.R;
+import com.example.shivambhardwaj.shitube.Services.NetworkBroadcast;
 import com.example.shivambhardwaj.shitube.databinding.ActivityMainBinding;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
@@ -38,7 +40,6 @@ import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
     private final ActivityResultLauncher<String> resultLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
@@ -52,12 +53,15 @@ public class MainActivity extends AppCompatActivity {
     boolean doubleBackToExitPressedOnce = false;
     ActivityMainBinding binding;
     AdView adView;
+    private BroadcastReceiver broadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        broadcastReceiver = new NetworkBroadcast();
+        registerReceiver(broadcastReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 //        loadbannerad();
 
         MobileAds.initialize(this, new OnInitializationCompleteListener() {
@@ -109,7 +113,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         askNotificationPermission();
-
+//        To Show App Intro
+//        Intent i =new Intent(getApplicationContext(), AppIntro.class);
+//        startActivity(i);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -225,4 +231,9 @@ public class MainActivity extends AppCompatActivity {
         }, 2000);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(broadcastReceiver);
+    }
 }

@@ -15,11 +15,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.shivambhardwaj.shitube.Activities.CommonActivity;
-import com.example.shivambhardwaj.shitube.Activities.NotificationActivity;
 import com.example.shivambhardwaj.shitube.Activities.SearchActivity;
 import com.example.shivambhardwaj.shitube.Adapters.HomeAdapter;
 import com.example.shivambhardwaj.shitube.Adapters.LandscapeHomeAdapter;
-import com.example.shivambhardwaj.shitube.Models.NotificationModel;
 import com.example.shivambhardwaj.shitube.Models.VideoModel;
 import com.example.shivambhardwaj.shitube.R;
 import com.example.shivambhardwaj.shitube.databinding.FragmentHomeBinding;
@@ -102,7 +100,43 @@ public class HomeFragment extends Fragment {
                     fetchingData();
                 }
             });
-        } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            firebaseDatabase.getReference().child("Creaters").child(FirebaseAuth.getInstance().getUid()).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        String admin = snapshot.child("admin").getValue().toString();
+                        if (admin.equals("true")) {
+                            firebaseDatabase.getReference().child("Videos").addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                        String approved = dataSnapshot.child("approved").getValue().toString();
+                                        if (approved.equals("Pending")) {
+                                            binding.approvVideo.setVisibility(View.VISIBLE);
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+                        } else {
+
+                        }
+                    } else {
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+
+        }
+        else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
             fetchingDataInLandscape();
             binding.HorizontalScrollView.setVisibility(View.GONE);
             binding.landscapesimmer.setVisibility(View.VISIBLE);
@@ -118,60 +152,6 @@ public class HomeFragment extends Fragment {
 
         //loadBannerAds();
         loadBannerAds();
-        firebaseDatabase.getReference().child("Users").child(FirebaseAuth.getInstance().getUid()).child("Notifications").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    NotificationModel notificationModel = dataSnapshot.getValue(NotificationModel.class);
-                    String opened = String.valueOf(notificationModel.isNotificationOpened());
-                    if (opened.equals("false")) {
-                        binding.notificationCount.setVisibility(View.VISIBLE);
-
-                    } else {
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-        firebaseDatabase.getReference().child("Creaters").child(FirebaseAuth.getInstance().getUid()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    String admin = snapshot.child("admin").getValue().toString();
-                    if (admin.equals("true")) {
-                        firebaseDatabase.getReference().child("Videos").addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                                    String approved = dataSnapshot.child("approved").getValue().toString();
-                                    if (approved.equals("false")) {
-                                        binding.approvVideo.setVisibility(View.VISIBLE);
-                                    }
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-
-                            }
-                        });
-                    } else {
-
-                    }
-                } else {
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
 
         binding.approvVideo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -189,13 +169,7 @@ public class HomeFragment extends Fragment {
                 startActivity(intent);
             }
         });
-        binding.notifications.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getContext(), NotificationActivity.class);
-                startActivity(intent);
-            }
-        });
+
         binding.Autos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1467,5 +1441,44 @@ public class HomeFragment extends Fragment {
             // Handle landscape orientation
             fetchingDataInLandscape();
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        firebaseDatabase.getReference().child("Creaters").child(FirebaseAuth.getInstance().getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    String admin = snapshot.child("admin").getValue().toString();
+                    if (admin.equals("true")) {
+                        firebaseDatabase.getReference().child("Videos").addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                    String approved = dataSnapshot.child("approved").getValue().toString();
+                                    if (approved.equals("Pending")) {
+                                        binding.approvVideo.setVisibility(View.VISIBLE);
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                    } else {
+
+                    }
+                } else {
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 }

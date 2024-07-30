@@ -117,6 +117,7 @@
                 android:layout_marginEnd="15dp"
                 android:hint="Enter Title Of Your Video"
                 android:inputType="textCapWords"
+                android:textColor="@color/black"
                 android:textColorHint="@color/Gray" />
 
             <androidx.appcompat.widget.AppCompatButton
@@ -147,6 +148,7 @@
                 android:layout_marginEnd="15dp"
                 android:hint="Enter Description"
                 android:inputType="textCapWords"
+                android:textColor="@color/black"
                 android:textColorHint="@color/Gray"></EditText>
 
             <EditText
@@ -159,6 +161,7 @@
                 android:enabled="false"
                 android:hint="Video Duration"
                 android:inputType="none"
+                android:textColor="@color/black"
                 android:textColorHint="@color/Gray"></EditText>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -177,7 +180,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="#00FFFFFF"
-                    android:inputType="text" />
+                    android:inputType="text"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/Gray" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView

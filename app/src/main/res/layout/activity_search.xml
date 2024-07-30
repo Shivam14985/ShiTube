@@ -29,6 +29,8 @@
             android:layout_width="wrap_content"
             android:layout_height="35dp"
             android:layout_weight="1"
+            android:textColorHint="@color/Gray"
+            android:textColor="@color/black"
             android:background="@drawable/bg_edittext"
             android:backgroundTint="#ECECEC"
             android:hint="Search...."

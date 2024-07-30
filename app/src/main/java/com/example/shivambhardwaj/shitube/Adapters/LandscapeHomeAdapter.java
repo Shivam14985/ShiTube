@@ -114,9 +114,7 @@ public class LandscapeHomeAdapter extends RecyclerView.Adapter<LandscapeHomeAdap
                             intent.setType("text/plain");
                             context.startActivity(Intent.createChooser(intent, "Share Via"));
                         }
-                        if (item.getItemId() == R.id.report) {
-                            Toast.makeText(context, "Reporting", Toast.LENGTH_SHORT).show();
-                        }
+
                         return true;
                     }
                 });

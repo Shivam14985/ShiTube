@@ -1,6 +1,9 @@
 package com.example.shivambhardwaj.shitube.Activities;
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -14,9 +17,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.shivambhardwaj.shitube.Adapters.HomeAdapter;
 import com.example.shivambhardwaj.shitube.Models.CreatersModel;
-import com.example.shivambhardwaj.shitube.Models.NotificationModel;
 import com.example.shivambhardwaj.shitube.Models.VideoModel;
 import com.example.shivambhardwaj.shitube.R;
+import com.example.shivambhardwaj.shitube.Services.NetworkBroadcast;
 import com.example.shivambhardwaj.shitube.databinding.ActivityOthersProfileViewBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -36,12 +39,14 @@ public class OthersProfileViewActivity extends AppCompatActivity {
     String dateTime;
     Calendar calendar;
     SimpleDateFormat simpleDateFormat;
+    private BroadcastReceiver broadcastReceiver;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityOthersProfileViewBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        broadcastReceiver = new NetworkBroadcast();
+        registerReceiver(broadcastReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         database = FirebaseDatabase.getInstance();
         binding.LoadingEffect.startShimmer();
         Intent intent = getIntent();
@@ -147,15 +152,6 @@ public class OthersProfileViewActivity extends AppCompatActivity {
                                         database.getReference().child("Creaters").child(value).child("subscribersCount").setValue(subscribers);
                                         database.getReference().child("Creaters").child(value).child("subscribedBy").child(FirebaseAuth.getInstance().getUid()).setValue("true");
                                         binding.btnSubscribe.setText("Subscribed");
-
-                                        NotificationModel notificationModel = new NotificationModel();
-                                        notificationModel.setNotificationType("Subscribers");
-                                        notificationModel.setNotificationText("subscribed your channel.");
-                                        notificationModel.setNotificationBy(FirebaseAuth.getInstance().getUid());
-                                        notificationModel.setNotificationOpened(false);
-                                        notificationModel.setVideoId(value);
-                                        notificationModel.setNotificationAt(new Date().getTime());
-                                        database.getReference().child("Users").child(value).child("Notifications").push().setValue(notificationModel);
                                     }
 
                                     @Override
@@ -293,4 +289,11 @@ public class OthersProfileViewActivity extends AppCompatActivity {
             return insets;
         });
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(broadcastReceiver);
+    }
+
 }

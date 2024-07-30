@@ -172,7 +172,7 @@ public class ShortsAdapter extends RecyclerView.Adapter<ShortsAdapter.vieHolder>
                 String uri = model.getVideo();
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_SEND);
-                intent.putExtra(Intent.EXTRA_TEXT, model.getTitle() + "\n" + uri);
+                intent.putExtra(Intent.EXTRA_TEXT,"Watch this short video:"+ model.getTitle() + " " + uri);
                 intent.setType("text/plain");
                 context.startActivity(Intent.createChooser(intent, "Share Via"));
 

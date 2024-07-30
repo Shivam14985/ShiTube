@@ -6,17 +6,21 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -30,6 +34,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.shivambhardwaj.shitube.Models.UsersModel;
 import com.example.shivambhardwaj.shitube.R;
+import com.example.shivambhardwaj.shitube.Services.NetworkBroadcast;
 import com.example.shivambhardwaj.shitube.databinding.ActivitySignUpBinding;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -62,6 +67,8 @@ public class SignUpActivity extends AppCompatActivity {
     ActivitySignUpBinding binding;
     FirebaseAuth auth;
     FirebaseDatabase database;
+    private BroadcastReceiver broadcastReceiver;
+
     private final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult o) {
@@ -98,6 +105,10 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivitySignUpBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        EdgeToEdge.enable(this);
+
+        broadcastReceiver = new NetworkBroadcast();
+        registerReceiver(broadcastReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
         auth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
@@ -115,7 +126,7 @@ public class SignUpActivity extends AppCompatActivity {
                 String Name = binding.EtName.getText().toString();
                 String Password = binding.EtPassword.getText().toString();
                 if (binding.EtEmail.getText().toString().isEmpty() || binding.EtName.getText().toString().isEmpty() || binding.EtPassword.getText().toString().isEmpty()) {
-                    Snackbar snackbar= Snackbar.make(v, "Fill all fields", Snackbar.LENGTH_SHORT);
+                    Snackbar snackbar = Snackbar.make(v, "Fill all fields", Snackbar.LENGTH_SHORT);
                     snackbar.setTextColor(Color.WHITE);
                     snackbar.setBackgroundTint(Color.RED);
                     snackbar.show();
@@ -154,7 +165,6 @@ public class SignUpActivity extends AppCompatActivity {
                                             notifChannel.enableLights(true);
                                             notifChannel.setLightColor(Color.RED);
                                             notifChannel.enableVibration(true);
-
                                             notifManager.createNotificationChannel(notifChannel);
 
                                             notifBuilder = new Notification.Builder(SignUpActivity.this, channelID)
@@ -178,7 +188,7 @@ public class SignUpActivity extends AppCompatActivity {
                                     }
                                 }, 4500);
                             } else {
-                                Snackbar snackbar= Snackbar.make(v, task.getException().getLocalizedMessage(), Snackbar.LENGTH_SHORT);
+                                Snackbar snackbar = Snackbar.make(v, task.getException().getLocalizedMessage(), Snackbar.LENGTH_SHORT);
                                 snackbar.setTextColor(Color.WHITE);
                                 snackbar.setBackgroundTint(Color.RED);
                                 snackbar.show();
@@ -216,6 +226,7 @@ public class SignUpActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(SignUpActivity.this, OtpAuthenticationActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
         askNotificationPermission();
@@ -237,4 +248,9 @@ public class SignUpActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(broadcastReceiver);
+    }
 }
