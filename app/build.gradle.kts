@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.google.gms.google.services)
     alias(libs.plugins.google.firebase.crashlytics)
+    alias(libs.plugins.google.firebase.firebase.perf)
 }
 
 android {
@@ -49,6 +50,7 @@ dependencies {
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.inappmessaging.display)
     implementation(libs.gridlayout)
+    implementation(libs.firebase.perf)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -62,14 +64,14 @@ dependencies {
     //ShimmerEffect
     implementation("com.facebook.shimmer:shimmer:0.5.0@aar")
     //animation
-    implementation("com.airbnb.android:lottie:6.4.1")
+    implementation("com.airbnb.android:lottie:6.5.0")
     //ExoPlayer3
-    implementation("androidx.media3:media3-exoplayer:1.3.1")
-    implementation("androidx.media3:media3-exoplayer-dash:1.3.1")
-    implementation("androidx.media3:media3-exoplayer-hls:1.3.1")
-    implementation("androidx.media3:media3-ui:1.3.1")
+    implementation("androidx.media3:media3-exoplayer:1.4.0")
+    implementation("androidx.media3:media3-exoplayer-dash:1.4.0")
+    implementation("androidx.media3:media3-exoplayer-hls:1.4.0")
+    implementation("androidx.media3:media3-ui:1.4.0")
     implementation("com.google.ads.interactivemedia.v3:interactivemedia:3.34.0")
-    implementation("androidx.media3:media3-exoplayer-ima:1.3.1")
+    implementation("androidx.media3:media3-exoplayer-ima:1.4.0")
     //Loader
     implementation("com.github.ybq:Android-SpinKit:1.4.0")
     //material Design
@@ -81,6 +83,5 @@ dependencies {
     implementation ("com.squareup.retrofit2:converter-gson:2.11.0")
     //google signin
     implementation("com.google.android.gms:play-services-auth:21.2.0")
-    implementation("com.github.AppIntro:AppIntro:6.0.0")
 
 }

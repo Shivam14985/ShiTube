@@ -1,8 +1,10 @@
 package com.example.shivambhardwaj.shitube.Adapters;
 
+import android.annotation.SuppressLint;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Environment;
 import android.view.LayoutInflater;
@@ -23,6 +25,7 @@ import com.example.shivambhardwaj.shitube.Models.VideoModel;
 import com.example.shivambhardwaj.shitube.R;
 import com.example.shivambhardwaj.shitube.databinding.HomeRecyclerViewBinding;
 import com.github.marlonlom.utilities.timeago.TimeAgo;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -52,7 +55,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.viewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull viewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull viewHolder holder, @SuppressLint("RecyclerView") int position) {
         VideoModel model = list.get(position);
         String time = TimeAgo.using(model.getAddedAt());
         holder.binding.VideoTitle.setText(model.getTitle());
@@ -74,12 +77,24 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.viewHolder> {
         holder.binding.Recyclerclick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, ViewVideoActivity.class);
-                intent.putExtra("VideoContent", list.get(position));  // Use model directly
-                context.startActivity(intent);
-                FirebaseDatabase.getInstance().getReference().child("Videos").child(model.getPostId()).child("viewedBy").child(FirebaseAuth.getInstance().getUid()).setValue("true");
-                FirebaseDatabase.getInstance().getReference().child("Videos").child(model.getPostId()).child("viewsCount").setValue(model.getViewsCount() + 1);
-
+                if (model.getApproved().equals("true")){
+                    Intent intent = new Intent(context, ViewVideoActivity.class);
+                    intent.putExtra("VideoContent", list.get(position));  // Use model directly
+                    context.startActivity(intent);
+                    FirebaseDatabase.getInstance().getReference().child("Videos").child(model.getPostId()).child("viewedBy").child(FirebaseAuth.getInstance().getUid()).setValue("true");
+                    FirebaseDatabase.getInstance().getReference().child("Videos").child(model.getPostId()).child("viewsCount").setValue(model.getViewsCount() + 1);
+                }
+                if (model.getApproved().equals("Rejected")){
+                    Snackbar snackbar=Snackbar.make(v,"Video Rejected",Snackbar.LENGTH_SHORT);
+                    snackbar.setBackgroundTint(Color.RED);
+                    snackbar.setTextColor(Color.WHITE);
+                    snackbar.show();
+                }if (model.getApproved().equals("Pending")){
+                    Snackbar snackbar=Snackbar.make(v,"Video Approval Pending",Snackbar.LENGTH_SHORT);
+                    snackbar.setBackgroundTint(Color.RED);
+                    snackbar.setTextColor(Color.WHITE);
+                    snackbar.show();
+                }
             }
         });
         holder.binding.moreotion.setOnClickListener(new View.OnClickListener() {

@@ -14,6 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_marginRight="5dp"
+        android:layout_marginBottom="2dp"
         android:orientation="horizontal">
 
         <ImageView
@@ -29,12 +30,15 @@
             android:layout_width="wrap_content"
             android:layout_height="35dp"
             android:layout_weight="1"
-            android:textColorHint="@color/Gray"
-            android:textColor="@color/black"
             android:background="@drawable/bg_edittext"
             android:backgroundTint="#ECECEC"
             android:hint="Search...."
-            android:paddingHorizontal="10dp" />
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:lines="1"
+            android:paddingHorizontal="10dp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/Gray" />
 
         <ImageView
             android:id="@+id/searchttospeek"

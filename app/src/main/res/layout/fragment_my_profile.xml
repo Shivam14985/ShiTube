@@ -90,8 +90,6 @@
                                 android:id="@+id/becomeCreater"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginLeft="10dp"
-                                android:maxWidth="105dp"
                                 android:text="view channel"
                                 android:textColor="@color/textColorGray"></TextView>
 

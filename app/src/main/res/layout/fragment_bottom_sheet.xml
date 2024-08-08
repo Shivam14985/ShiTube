@@ -61,7 +61,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="440dp"
         android:minHeight="440dp"
         android:layout_below="@+id/linearLayout3"
         android:layout_marginEnd="0dp"
@@ -72,6 +72,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/recycler_view"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="0dp"
         android:orientation="horizontal">
 
         <!-- EditText for typing new comments -->
@@ -91,11 +96,11 @@
             android:layout_weight="1"
             android:background="@drawable/bg_edittext"
             android:hint="Add a comment..."
-            android:inputType="textMultiLine"
-            android:textColor="@color/black"
+            android:inputType="text"
             android:minHeight="40dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
+            android:textColor="@color/black"
             android:textColorHint="@color/Gray" />
 
         <!-- Button to submit the new comment -->

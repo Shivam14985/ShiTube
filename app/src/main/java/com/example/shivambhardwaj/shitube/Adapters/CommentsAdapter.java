@@ -59,7 +59,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.viewHo
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             UsersModel model = snapshot.getValue(UsersModel.class);
 
-                            holder.binding.Name.setText(model.getUserName()+"•"+time);
+                            holder.binding.Name.setText(model.getUserName()+" • "+time);
                         }
 
                         @Override

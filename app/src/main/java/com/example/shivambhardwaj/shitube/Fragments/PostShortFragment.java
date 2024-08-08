@@ -83,6 +83,7 @@ public class PostShortFragment extends Fragment {
                     snackbar.setDuration(5000);
                     snackbar.show();
                 } else {
+                    binding.UplaodToFirebase.setEnabled(false);
                     FirebaseDatabase.getInstance().getReference().child("Creaters").child(FirebaseAuth.getInstance().getUid()).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {

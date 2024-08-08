@@ -250,6 +250,7 @@ public class CommonActivity extends AppCompatActivity {
                                             model.setInstagramLink(Instagram);
                                             model.setTwitterLink(Twitter);
                                             model.setWebsiteLink(Website);
+                                            model.setFacebookLink(facebook);
                                             database.getReference().child("Creaters").child(FirebaseAuth.getInstance().getUid()).setValue(model).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void unused) {

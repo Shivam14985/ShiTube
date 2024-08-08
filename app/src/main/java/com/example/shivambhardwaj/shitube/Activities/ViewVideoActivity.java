@@ -167,7 +167,7 @@ public class ViewVideoActivity extends AppCompatActivity {
                 loadInterstitialAds();
                 //banner ads
                 loadBannerAds();
-            } else {
+            } if (model.getApproved().equals("Rejected")||model.getApproved().equals("Pending")){
                 binding.ApprovalLayout.setVisibility(View.VISIBLE);
                 binding.ApproveVideoTitle.setText(model.getTitle());
                 binding.ApproveVideoDescription.setText("Description :" + model.getVideoDescription());
@@ -687,6 +687,8 @@ public class ViewVideoActivity extends AppCompatActivity {
                             } else {
                                 list.add(model1);
                             }
+                        }else{
+
                         }
 
                     }

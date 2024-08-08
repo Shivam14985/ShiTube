@@ -179,16 +179,6 @@ public class MyProfileFragment extends Fragment {
                                 startActivity(intent);
                             }
                         });
-                    } else {
-                        binding.viewmoreHistory.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Snackbar snackbar = Snackbar.make(binding.getRoot(), "No History Found", Snackbar.LENGTH_SHORT);
-                                snackbar.setBackgroundTint(getResources().getColor(R.color.white));
-                                snackbar.setTextColor(getResources().getColor(R.color.black));
-                                snackbar.show();
-                            }
-                        });
                     }
                 }
 

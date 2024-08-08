@@ -124,8 +124,11 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
             database.getReference().child("Creaters").child(FirebaseAuth.getInstance().getUid()).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    CreatersModel creatersModel = snapshot.getValue(CreatersModel.class);
-                    Picasso.get().load(creatersModel.getProfileImage()).placeholder(R.drawable.profileuser).into(binding.profileImage);
+                    if (snapshot.exists()){
+                        CreatersModel creatersModel = snapshot.getValue(CreatersModel.class);
+                        Picasso.get().load(creatersModel.getProfileImage()).placeholder(R.drawable.profileuser).into(binding.profileImage);
+                    }else {
+                    }
                 }
 
                 @Override
@@ -217,9 +220,9 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
             database.getReference().child("Creaters").child(FirebaseAuth.getInstance().getUid()).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    CreatersModel creatersModel = snapshot.getValue(CreatersModel.class);
+                    if (snapshot.exists()){CreatersModel creatersModel = snapshot.getValue(CreatersModel.class);
                     Picasso.get().load(creatersModel.getProfileImage()).placeholder(R.drawable.profileuser).into(binding.profileImage);
-                }
+                }}
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {

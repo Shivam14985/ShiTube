@@ -1,5 +1,6 @@
 package com.example.shivambhardwaj.shitube.Adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -40,7 +41,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.viewHold
     }
 
     @Override
-    public void onBindViewHolder(@NonNull viewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull viewHolder holder, @SuppressLint("RecyclerView") int position) {
         VideoModel videoModel = list.get(position);
         holder.binding.VideoTitle.setText(videoModel.getTitle());
         holder.binding.channelName.setText(videoModel.getChannelName());

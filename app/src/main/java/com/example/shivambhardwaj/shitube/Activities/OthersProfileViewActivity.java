@@ -199,7 +199,7 @@ public class OthersProfileViewActivity extends AppCompatActivity {
                             calendar.setTimeInMillis(model.getJoinedOn());
                             simpleDateFormat = new SimpleDateFormat("dd MMM yyyy");
                             dateTime = simpleDateFormat.format(calendar.getTime());
-                            binding.JoinedOnText.setText(dateTime);
+                            binding.JoinedOnText.setText("Joined On "+dateTime);
 
                             binding.WebsiteLinkLayout.setOnClickListener(new View.OnClickListener() {
                                 @Override

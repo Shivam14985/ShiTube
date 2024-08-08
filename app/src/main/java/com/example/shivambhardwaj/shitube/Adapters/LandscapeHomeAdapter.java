@@ -1,5 +1,6 @@
 package com.example.shivambhardwaj.shitube.Adapters;
 
+import android.annotation.SuppressLint;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
@@ -52,7 +53,7 @@ public class LandscapeHomeAdapter extends RecyclerView.Adapter<LandscapeHomeAdap
     }
 
     @Override
-    public void onBindViewHolder(@NonNull viewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull viewHolder holder, @SuppressLint("RecyclerView") int position) {
         VideoModel model = list.get(position);
         String time = TimeAgo.using(model.getAddedAt());
         holder.binding.VideoTitle.setText(model.getTitle());

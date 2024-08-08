@@ -113,9 +113,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         askNotificationPermission();
-//        To Show App Intro
-//        Intent i =new Intent(getApplicationContext(), AppIntro.class);
-//        startActivity(i);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -215,6 +212,7 @@ public class MainActivity extends AppCompatActivity {
     }
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         if (doubleBackToExitPressedOnce) {
             finishAffinity();
         }
