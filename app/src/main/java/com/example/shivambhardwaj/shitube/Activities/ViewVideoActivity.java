@@ -883,11 +883,7 @@ public class ViewVideoActivity extends AppCompatActivity {
         if (isInPictureInPictureMode()) {
             exoPlayer.setPlayWhenReady(true);
             active = false;
-        } else {
-            exoPlayer.setPlayWhenReady(false);
-            exoPlayer.getPlaybackState();
-            active = false;
-        }
+           }
     }
 
     @Override

@@ -67,8 +67,6 @@ public class SignUpActivity extends AppCompatActivity {
     ActivitySignUpBinding binding;
     FirebaseAuth auth;
     FirebaseDatabase database;
-    private BroadcastReceiver broadcastReceiver;
-
     private final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult o) {
@@ -87,6 +85,42 @@ public class SignUpActivity extends AppCompatActivity {
                                 database.getReference().child("Users").child(task.getResult().getUser().getUid()).setValue(usersModel);
                                 Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
                                 startActivity(intent);
+                                finish();
+
+                                // This is how an Image to be displayed in our Notification
+                                // is decoded and stored in a variable. I've added a picture
+                                // named "download.jpeg" in the "Drawables".
+                                Bitmap myBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.thanks);
+                                Bitmap myBitmapS = BitmapFactory.decodeResource(getResources(), R.drawable.youtube);
+                                Intent notificationIntent = new Intent(SignUpActivity.this, MainActivity.class);
+                                PendingIntent playcontentIntent = PendingIntent.getActivity(SignUpActivity.this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+
+                                // If Min. API level of the phone is 26, then notification could be
+                                // made aesthetic
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    notifChannel = new NotificationChannel(channelID, description, NotificationManager.IMPORTANCE_HIGH);
+                                    notifChannel.enableLights(true);
+                                    notifChannel.setLightColor(Color.RED);
+                                    notifChannel.enableVibration(true);
+                                    notifManager.createNotificationChannel(notifChannel);
+
+                                    notifBuilder = new Notification.Builder(SignUpActivity.this, channelID)
+                                            .setContentTitle("Thanks !!!!")
+                                            .setContentText("We thanks you to choose on my platform. I will keep try to provide best user Interface, Services and Features.")
+                                            .setSmallIcon(R.drawable.youtube)
+                                            .setPriority(Notification.PRIORITY_HIGH)
+                                            .setStyle(new Notification.BigPictureStyle().bigPicture(myBitmap))
+                                            .setLargeIcon(myBitmapS).setContentIntent(playcontentIntent);
+
+                                }
+                                // Else the Android device would give out default UI attributes
+                                else {
+                                    notifBuilder = new Notification.Builder(SignUpActivity.this).setContentTitle("Welcome Back").setContentText("We thanks you to return on our platform");
+                                }
+
+                                // Everything is done now and the Manager is to be notified about
+                                // the Builder which built a Notification for the application
+                                notifManager.notify(1234, notifBuilder.build());
                             } else {
                                 Toast.makeText(SignUpActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             }
@@ -99,6 +133,7 @@ public class SignUpActivity extends AppCompatActivity {
         }
     });
     GoogleSignInClient mGoogleSignInClient;
+    private BroadcastReceiver broadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,7 +184,7 @@ public class SignUpActivity extends AppCompatActivity {
                                         Toast.makeText(SignUpActivity.this, "Registered", Toast.LENGTH_SHORT).show();
                                         Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
                                         startActivity(intent);
-
+                                        finish();
                                         // This is how an Image to be displayed in our Notification
                                         // is decoded and stored in a variable. I've added a picture
                                         // named "download.jpeg" in the "Drawables".
@@ -219,6 +254,7 @@ public class SignUpActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent signInIntent = mGoogleSignInClient.getSignInIntent();
                 activityResultLauncher.launch(signInIntent);
+                binding.progressBar2.setVisibility(View.VISIBLE);
             }
         });
         binding.AuthPhone.setOnClickListener(new View.OnClickListener() {

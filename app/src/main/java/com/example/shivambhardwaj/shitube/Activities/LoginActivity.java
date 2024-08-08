@@ -71,7 +71,10 @@ public class LoginActivity extends AppCompatActivity {
     });
     ActivityLoginBinding binding;
     FirebaseAuth auth;
-    private BroadcastReceiver broadcastReceiver;
+    // Assigning variables to Notification Manager, Channel and Builder
+    NotificationManager notifManager;
+    NotificationChannel notifChannel;
+    Notification.Builder notifBuilder;
     private final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult o) {
@@ -90,6 +93,43 @@ public class LoginActivity extends AppCompatActivity {
                                 FirebaseDatabase.getInstance().getReference().child("Users").child(task.getResult().getUser().getUid()).setValue(usersModel);
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 startActivity(intent);
+                                finish();
+                                // This is how an Image to be displayed in our Notification
+                                // is decoded and stored in a variable. I've added a picture
+                                // named "download.jpeg" in the "Drawables".
+                                Bitmap myBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.welcome);
+                                Bitmap myBitmapS = BitmapFactory.decodeResource(getResources(), R.drawable.youtube);
+                                Intent notificationIntent = new Intent(LoginActivity.this, MainActivity.class);
+                                PendingIntent playcontentIntent = PendingIntent.getActivity(LoginActivity.this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+
+                                // If Min. API level of the phone is 26, then notification could be
+                                // made aesthetic
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    notifChannel = new NotificationChannel(channelID, description, NotificationManager.IMPORTANCE_HIGH);
+                                    notifChannel.enableLights(true);
+                                    notifChannel.setLightColor(Color.RED);
+                                    notifChannel.enableVibration(true);
+
+                                    notifManager.createNotificationChannel(notifChannel);
+
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                        notifBuilder = new Notification.Builder(LoginActivity.this, channelID).setContentTitle("Welcome Back").setContentText("We thanks you to return on our platform. I will keep try to provide best user Interface, Services and Features.")
+                                                .setSmallIcon(R.drawable.youtube)
+                                                .setPriority(Notification.PRIORITY_HIGH)
+                                                .setStyle(new Notification.BigPictureStyle()
+                                                        .bigPicture(myBitmap)
+                                                        .setContentDescription("We thanks you to return on our platform. I will keep try to provide best user Interface, Services and Features.")).setLargeIcon(myBitmapS).setContentIntent(playcontentIntent);
+                                    }
+
+                                }
+                                // Else the Android device would give out default UI attributes
+                                else {
+                                    notifBuilder = new Notification.Builder(LoginActivity.this).setContentTitle("Welcome Back").setContentText("We thanks you to return on our platform. I will keep try to provide best user Interface, Services and Features.");
+                                }
+
+                                // Everything is done now and the Manager is to be notified about
+                                // the Builder which built a Notification for the application
+                                notifManager.notify(1234, notifBuilder.build());
                             } else {
                                 Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             }
@@ -101,14 +141,11 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
     });
-    // Assigning variables to Notification Manager, Channel and Builder
-    NotificationManager notifManager;
-    NotificationChannel notifChannel;
-    Notification.Builder notifBuilder;
     GoogleSignInClient mGoogleSignInClient;
     ProgressDialog progressDialog;
     String phoneNumber, otp;
     PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallback;
+    private BroadcastReceiver broadcastReceiver;
     private String verificationCode;
 
     @Override
@@ -136,7 +173,7 @@ public class LoginActivity extends AppCompatActivity {
                 String Password = binding.EtPassword.getText().toString();
 
                 if (Email.isEmpty() || Password.isEmpty()) {
-                    Snackbar snackbar= Snackbar.make(v, "Fill above fields", Snackbar.LENGTH_SHORT);
+                    Snackbar snackbar = Snackbar.make(v, "Fill above fields", Snackbar.LENGTH_SHORT);
                     snackbar.setTextColor(Color.WHITE);
                     snackbar.setBackgroundTint(Color.RED);
                     snackbar.show();
@@ -187,7 +224,7 @@ public class LoginActivity extends AppCompatActivity {
                                 // the Builder which built a Notification for the application
                                 notifManager.notify(1234, notifBuilder.build());
                             } else {
-                                Snackbar snackbar= Snackbar.make(v, task.getException().getLocalizedMessage(), Snackbar.LENGTH_SHORT);
+                                Snackbar snackbar = Snackbar.make(v, task.getException().getLocalizedMessage(), Snackbar.LENGTH_SHORT);
                                 snackbar.setTextColor(Color.WHITE);
                                 snackbar.setBackgroundTint(Color.GREEN);
                                 snackbar.show();
@@ -230,18 +267,18 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String Email = binding.EtEmailForgot.getText().toString();
                 if (Email.isEmpty()) {
-                    Snackbar snackbar= Snackbar.make(v, "Enter Email First", Snackbar.LENGTH_SHORT);
+                    Snackbar snackbar = Snackbar.make(v, "Enter Email First", Snackbar.LENGTH_SHORT);
                     snackbar.setTextColor(Color.WHITE);
-                    snackbar.setBackgroundTint(Color.RED);
+                    snackbar.setBackgroundTint(Color.parseColor("#C50000"));
                     snackbar.show();
 
                 } else {
                     auth.sendPasswordResetEmail(Email).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {
-                            Snackbar snackbar= Snackbar.make(v, "Reset password link has send to your Email ", Snackbar.LENGTH_SHORT);
+                            Snackbar snackbar = Snackbar.make(v, "Reset password link has send to your Email ", Snackbar.LENGTH_SHORT);
                             snackbar.setTextColor(Color.WHITE);
-                            snackbar.setBackgroundTint(Color.GREEN);
+                            snackbar.setBackgroundTint(Color.parseColor("#006A05"));
                             snackbar.show();
                             binding.SignInLAyout.setVisibility(View.VISIBLE);
                             binding.ForgotPAssWordLAyout.setVisibility(View.GONE);
@@ -249,9 +286,9 @@ public class LoginActivity extends AppCompatActivity {
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Snackbar snackbar= Snackbar.make(v, e.getLocalizedMessage(), Snackbar.LENGTH_SHORT);
+                            Snackbar snackbar = Snackbar.make(v, e.getLocalizedMessage(), Snackbar.LENGTH_SHORT);
                             snackbar.setTextColor(Color.WHITE);
-                            snackbar.setBackgroundTint(Color.RED);
+                            snackbar.setBackgroundTint(Color.parseColor("#C50000"));
                             snackbar.show();
 
                         }
@@ -283,34 +320,34 @@ public class LoginActivity extends AppCompatActivity {
                     snackbar.setTextColor(Color.WHITE);
                     snackbar.show();
                 }
-                if (binding.Phone.getMinEms() < 10){
+                if (binding.Phone.getMinEms() < 10) {
                     Snackbar snackbar = Snackbar.make(v, "Enter Valid Number", Snackbar.LENGTH_SHORT);
                     snackbar.setBackgroundTint(Color.RED);
                     snackbar.setTextColor(Color.WHITE);
                     snackbar.show();
-                }else{
-                binding.Success.setVisibility(View.GONE);
-                binding.Failed.setVisibility(View.GONE);
-                binding.progressBar.setVisibility(View.VISIBLE);
-                phoneNumber = binding.Phone.getText().toString();
-                PhoneAuthProvider.getInstance().verifyPhoneNumber("+91" + phoneNumber,                // Phone number to verify
-                        60,                           // Timeout duration
-                        TimeUnit.SECONDS,                // Unit of timeout
-                        LoginActivity.this,        // Activity (for callback binding)
-                        mCallback);                      // OnVerificationStateChangedCallbacks
-            }}
+                } else {
+                    binding.Success.setVisibility(View.GONE);
+                    binding.Failed.setVisibility(View.GONE);
+                    binding.progressBar.setVisibility(View.VISIBLE);
+                    phoneNumber = binding.Phone.getText().toString();
+                    PhoneAuthProvider.getInstance().verifyPhoneNumber("+91" + phoneNumber,                // Phone number to verify
+                            60,                           // Timeout duration
+                            TimeUnit.SECONDS,                // Unit of timeout
+                            LoginActivity.this,        // Activity (for callback binding)
+                            mCallback);                      // OnVerificationStateChangedCallbacks
+                }
+            }
         });
 
         binding.SubmitOtp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (binding.otpsubmit.getText().toString().isEmpty()){
+                if (binding.otpsubmit.getText().toString().isEmpty()) {
                     Snackbar snackbar = Snackbar.make(v, "Enter Otp First", Snackbar.LENGTH_SHORT);
                     snackbar.setBackgroundTint(Color.RED);
                     snackbar.setTextColor(Color.WHITE);
                     snackbar.show();
-                }
-                else {
+                } else {
                     progressDialog.show();
                     otp = binding.otpsubmit.getText().toString();
                     PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationCode, otp);
@@ -331,6 +368,12 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent signInIntent = mGoogleSignInClient.getSignInIntent();
                 activityResultLauncher.launch(signInIntent);
+//                Dialog dialog=new Dialog(LoginActivity.this);
+//                dialog.setContentView(R.layout.progress_bar);
+//                dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//                dialog.setCancelable(true);
+//                dialog.show();
+                binding.progressbarLoading.setVisibility(View.VISIBLE);
             }
         });
 
