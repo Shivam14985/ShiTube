@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -21,11 +22,11 @@
         android:theme="@style/Theme.ShiTube"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+
         <activity
             android:name=".Activities.OtpAuthenticationActivity"
             android:exported="false"
-            android:hardwareAccelerated="true"
-            />
+            android:hardwareAccelerated="true" />
         <activity
             android:name=".Activities.OthersProfileViewActivity"
             android:exported="false"
@@ -71,7 +72,6 @@
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize|adjustPan" />
 
-
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-5928796239739806~5932345653" />
@@ -87,6 +87,7 @@
         <meta-data
             android:name="firebase_performance_logcat_enabled"
             android:value="true" />
+
         <service
             android:name=".Services.FirebaseCloudMessaging"
             android:exported="false">

@@ -1,13 +1,18 @@
 package com.example.shivambhardwaj.shitube.Fragments;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
@@ -23,17 +28,21 @@ import com.example.shivambhardwaj.shitube.Models.UsersModel;
 import com.example.shivambhardwaj.shitube.Models.VideoModel;
 import com.example.shivambhardwaj.shitube.R;
 import com.example.shivambhardwaj.shitube.databinding.FragmentMyProfileBinding;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.razorpay.Checkout;
+import com.razorpay.PaymentResultListener;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class MyProfileFragment extends Fragment {
+public class MyProfileFragment extends Fragment implements PaymentResultListener {
     FragmentMyProfileBinding binding;
     FirebaseDatabase database;
     Uri uri;
@@ -57,7 +66,7 @@ public class MyProfileFragment extends Fragment {
         binding.Instagram.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(Intent.ACTION_VIEW);
+                Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri.parse("https://www.instagram.com/shivambhardwaj26_07/"));
                 startActivity(intent);
             }
@@ -66,7 +75,7 @@ public class MyProfileFragment extends Fragment {
         binding.TwitterImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(Intent.ACTION_VIEW);
+                Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri.parse("https://x.com/ShivamB93657571"));
                 startActivity(intent);
             }
@@ -75,7 +84,7 @@ public class MyProfileFragment extends Fragment {
         binding.Github.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(Intent.ACTION_VIEW);
+                Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri.parse("https://github.com/Shivam14985"));
                 startActivity(intent);
             }
@@ -86,7 +95,7 @@ public class MyProfileFragment extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("plain/text");
-                intent.putExtra(Intent.EXTRA_EMAIL, new String[] { "bhardwajshivam667@gmail.com" });
+                intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"bhardwajshivam667@gmail.com"});
                 startActivity(Intent.createChooser(intent, null));
             }
         });
@@ -94,16 +103,16 @@ public class MyProfileFragment extends Fragment {
         binding.LinkedIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(Intent.ACTION_VIEW);
+                Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri.parse("https://www.linkedin.com/in/shivam-bhardwaj-348491270/"));
-                startActivity(Intent.createChooser(intent,""));
+                startActivity(Intent.createChooser(intent, ""));
             }
         });
         Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/shitube-173fe.appspot.com/o/Icons%20For%20App%2Finternet.png?alt=media&token=fb524c41-b569-46ea-ba8a-b163e8ca8b6a").into(binding.Website);
         binding.Website.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(Intent.ACTION_VIEW);
+                Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri.parse("https://shivam14985.github.io/PortPholio/"));
                 startActivity(intent);
             }
@@ -132,6 +141,39 @@ public class MyProfileFragment extends Fragment {
                             intent.putExtra(Intent.EXTRA_TEXT, "Download ShiTube " + "https://drive.google.com/drive/folders/1oaddC4CTr8IcrOjOLR24TXi5dMGkGE_j");
                             intent.setType("text/plain");
                             startActivity(Intent.createChooser(intent, "Share Via"));
+                        }
+                        if (item.getItemId() == R.id.getVerified) {
+                            Dialog dialog = new Dialog(getContext());
+                            dialog.setContentView(R.layout.activity_verified_layout);
+                            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                            dialog.setCancelable(true);
+                            dialog.getWindow().getAttributes().windowAnimations = R.style.animation;
+                            dialog.show();
+
+                            ImageView imageView=dialog.findViewById(R.id.getVerifiedImage);
+                            Picasso.get().load("https://firebasestorage.googleapis.com/v0/b/shitube-173fe.appspot.com/o/Icons%20For%20App%2FVerified.jpg?alt=media&token=bea20e3a-8aa1-42df-bd2f-70923946825f").placeholder(R.drawable.gallery).into(imageView);
+
+                            Button btn = dialog.findViewById(R.id.Next);
+                            btn.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    String amount = "79";
+                                    int payableAmount = Math.round(Float.parseFloat(amount) * 100);
+
+                                    Checkout checkout = new Checkout();
+                                    checkout.setKeyID("rzp_test_uSxJ6egvw6z3RL");
+                                    JSONObject jsonObject = new JSONObject();
+                                    try {
+                                        jsonObject.put("name", "QueTube");
+                                        jsonObject.put("currency", "INR");
+                                        jsonObject.put("amount", payableAmount);
+                                        checkout.open((Activity) getContext(), jsonObject);
+                                    } catch (JSONException e) {
+                                        throw new RuntimeException(e);
+                                    }
+
+                                }
+                            });
                         }
                         return true;
                     }
@@ -309,5 +351,15 @@ public class MyProfileFragment extends Fragment {
         } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
 
         }
+    }
+
+    @Override
+    public void onPaymentSuccess(String s) {
+        Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onPaymentError(int i, String s) {
+        Toast.makeText(getContext(), "Failed", Toast.LENGTH_SHORT).show();
     }
 }
